@@ -5,7 +5,7 @@
 
 import { firebaseService } from '../core/firebase.js';
 import { storage, STORES } from '../core/storage.js';
-import { CURRENT_APP_VERSION, forceReloadApp } from '../utils/versionChecker.js';
+import { getAppVersion, forceReloadApp } from '../utils/versionChecker.js';
 
 export class SettingsModal {
   constructor(modalElement, onStateChangeCallback) {
@@ -136,7 +136,7 @@ export class SettingsModal {
             <button type="button" class="btn btn-outline btn-sm" id="force-update-btn" title="Bersihkan cache browser dan muat ulang aplikasi ke versi terbaru">
               🔄 Bersihkan Cache & Update
             </button>
-            <span style="font-size: 0.74rem; color: var(--text-muted); font-weight: 600;">v${CURRENT_APP_VERSION}</span>
+            <span style="font-size: 0.74rem; color: var(--text-muted); font-weight: 600;">v${getAppVersion()}</span>
           </div>
           <div style="display: flex; gap: 8px;">
             <button type="button" class="btn btn-outline" id="cancel-settings-btn">Tutup</button>

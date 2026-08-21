@@ -1,9 +1,16 @@
 /**
  * Auto-Version Checker & Cache-Buster Engine
- * Detects new server releases and forces clean cache updates across devices
+ * Uses version.json as the Single Source of Truth to detect updates and prevent banner loops
  */
 
-export const CURRENT_APP_VERSION = '1.0.9';
+export function getAppVersion() {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    return localStorage.getItem('kp_app_version') || '1.0.9';
+  }
+  return '1.0.9';
+}
+
+export const CURRENT_APP_VERSION = getAppVersion();
 
 /**
  * Force clear cache and hard reload the application
@@ -28,11 +35,12 @@ export async function forceReloadApp(targetVersion = null) {
     console.warn('Error clearing caches:', err);
   }
 
-  // Update stored version to prevent banner loop
-  const newVer = targetVersion || CURRENT_APP_VERSION;
-  localStorage.setItem('kp_app_version', newVer);
+  // Update stored active version
+  if (targetVersion) {
+    localStorage.setItem('kp_app_version', targetVersion);
+  }
 
-  // Reload with cache-buster query parameter
+  // Reload with cache-buster timestamp query parameter
   const url = new URL(window.location.href);
   url.searchParams.set('_v', Date.now().toString());
   window.location.replace(url.toString());
@@ -56,16 +64,28 @@ export async function checkForAppUpdate() {
     const data = await res.json();
     if (!data.version) return;
 
-    // If server version matches current running code, sync and dismiss banner
-    if (data.version === CURRENT_APP_VERSION) {
-      localStorage.setItem('kp_app_version', CURRENT_APP_VERSION);
+    const storedVersion = localStorage.getItem('kp_app_version');
+
+    // First time load: save current server version without prompting
+    if (!storedVersion) {
+      localStorage.setItem('kp_app_version', data.version);
+      return;
+    }
+
+    // If current stored version matches server version, ensure banner is removed
+    if (storedVersion === data.version) {
       const banner = document.getElementById('app-update-banner');
       if (banner) banner.remove();
       return;
     }
 
-    // Only show banner if server version is strictly newer/different from CURRENT_APP_VERSION
-    console.log(`[VersionChecker] New version detected: ${data.version} (current running: ${CURRENT_APP_VERSION})`);
+    // If user already dismissed this version during current session, do not re-prompt
+    if (sessionStorage.getItem('kp_dismissed_version') === data.version) {
+      return;
+    }
+
+    // New version detected -> render floating update banner
+    console.log(`[VersionChecker] New version detected on server: ${data.version} (active: ${storedVersion})`);
     showUpdateBanner(data);
   } catch (err) {
     // Ignore network failure when offline
@@ -96,7 +116,7 @@ function showUpdateBanner(updateData) {
       <button class="btn btn-sm btn-primary" id="apply-update-btn">
         Muat Ulang
       </button>
-      <button class="update-banner-close" id="dismiss-update-btn">&times;</button>
+      <button class="update-banner-close" id="dismiss-update-btn" title="Tutup notifikasi">&times;</button>
     </div>
   `;
 
@@ -107,6 +127,7 @@ function showUpdateBanner(updateData) {
   });
 
   document.getElementById('dismiss-update-btn')?.addEventListener('click', () => {
+    sessionStorage.setItem('kp_dismissed_version', updateData.version);
     banner.remove();
   });
 }

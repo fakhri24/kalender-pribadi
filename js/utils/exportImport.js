@@ -4,7 +4,7 @@
  */
 
 import { storage, STORES } from '../core/storage.js';
-import { CURRENT_APP_VERSION } from './versionChecker.js';
+import { getAppVersion } from './versionChecker.js';
 
 /**
  * Export all application data as a JSON file download
@@ -17,7 +17,7 @@ export async function exportAllData() {
 
   const backupData = {
     appName: 'Kalender Pribadi Al-Bayan',
-    version: CURRENT_APP_VERSION,
+    version: getAppVersion(),
     exportedAt: new Date().toISOString(),
     data: {
       events,
