@@ -369,6 +369,52 @@ Gaya Komunikasi:
   }
 
   /**
+   * Dynamically detect available models for user's API key
+   */
+  async getBestModelName(apiKey) {
+    const savedModel = localStorage.getItem('kp_gemini_model_name');
+    if (savedModel) return savedModel;
+
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+      if (res.ok) {
+        const data = await res.json();
+        const available = (data.models || [])
+          .filter(m => m.supportedGenerationMethods?.includes('generateContent'))
+          .map(m => m.name.replace('models/', ''));
+
+        console.log('[Gemini API] Available models for key:', available);
+
+        const candidates = [
+          'gemini-1.5-flash-latest',
+          'gemini-2.0-flash',
+          'gemini-2.0-flash-exp',
+          'gemini-1.5-flash',
+          'gemini-1.5-pro-latest',
+          'gemini-1.5-pro',
+          'gemini-pro'
+        ];
+
+        for (const cand of candidates) {
+          if (available.includes(cand)) {
+            localStorage.setItem('kp_gemini_model_name', cand);
+            return cand;
+          }
+        }
+
+        if (available.length > 0) {
+          localStorage.setItem('kp_gemini_model_name', available[0]);
+          return available[0];
+        }
+      }
+    } catch (e) {
+      console.warn('Gagal memuat list models dari Gemini API:', e);
+    }
+
+    return 'gemini-1.5-flash-latest';
+  }
+
+  /**
    * Send message to Gemini API with Tool Calling support
    */
   async sendMessage(userText) {
@@ -377,13 +423,16 @@ Gaya Komunikasi:
       throw new Error('Gemini API Key belum dimasukkan. Silakan buka menu ⚙️ Cloud & AI di kanan atas untuk memasukkan API Key dari Google AI Studio.');
     }
 
+    // Auto-detect best model
+    const modelName = await this.getBestModelName(apiKey);
+
     // Add user message to history
     this.history.push({
       role: 'user',
       parts: [{ text: userText }]
     });
 
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${this.modelName}:generateContent?key=${apiKey}`;
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
 
     const requestBody = {
       systemInstruction: {
@@ -402,11 +451,32 @@ Gaya Komunikasi:
     while (maxSteps > 0) {
       maxSteps--;
 
-      const response = await fetch(endpoint, {
+      let response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody)
       });
+
+      // If model not found (404), try fallback to gemini-1.5-flash-latest or gemini-2.0-flash
+      if (response.status === 404) {
+        console.warn(`Model ${modelName} not found (404), trying fallback models...`);
+        const fallbacks = ['gemini-1.5-flash-latest', 'gemini-2.0-flash', 'gemini-pro'];
+        for (const fb of fallbacks) {
+          if (fb === modelName) continue;
+          const fbEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${fb}:generateContent?key=${apiKey}`;
+          const fbRes = await fetch(fbEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+          });
+          if (fbRes.ok) {
+            response = fbRes;
+            localStorage.setItem('kp_gemini_model_name', fb);
+            console.log(`Fallback succeeded with model: ${fb}`);
+            break;
+          }
+        }
+      }
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -451,7 +521,7 @@ Gaya Komunikasi:
         });
       }
 
-      // Add tool responses as a user/tool message to contents and loop again for final speech
+      // Add tool responses as a user message with functionResponse parts
       const toolMessage = {
         role: 'user',
         parts: functionResponses

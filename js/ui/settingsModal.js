@@ -90,6 +90,20 @@ export class SettingsModal {
             </div>
           </div>
 
+          <!-- Gemini Model Selector -->
+          <div class="form-group" style="margin-top: 4px;">
+            <label class="form-label">
+              <span>🧠 Model Gemini</span>
+            </label>
+            <select id="gemini-model-select" class="form-input">
+              <option value="" ${!localStorage.getItem('kp_gemini_model_name') ? 'selected' : ''}>⚡ Otomatis (Deteksi Model Terbaik)</option>
+              <option value="gemini-1.5-flash-latest" ${localStorage.getItem('kp_gemini_model_name') === 'gemini-1.5-flash-latest' ? 'selected' : ''}>gemini-1.5-flash-latest (Cepat & Stabil)</option>
+              <option value="gemini-2.0-flash" ${localStorage.getItem('kp_gemini_model_name') === 'gemini-2.0-flash' ? 'selected' : ''}>gemini-2.0-flash (Generasi Terbaru)</option>
+              <option value="gemini-1.5-pro-latest" ${localStorage.getItem('kp_gemini_model_name') === 'gemini-1.5-pro-latest' ? 'selected' : ''}>gemini-1.5-pro-latest (Penalaran Mendalam)</option>
+              <option value="gemini-1.5-flash" ${localStorage.getItem('kp_gemini_model_name') === 'gemini-1.5-flash' ? 'selected' : ''}>gemini-1.5-flash</option>
+            </select>
+          </div>
+
           <!-- Firebase Project Config JSON -->
           <div class="form-group" style="margin-top: 4px;">
             <label class="form-label" style="display: flex; justify-content: space-between;">
@@ -179,7 +193,14 @@ export class SettingsModal {
       const configStr = this.modalEl.querySelector('#firebase-config-input')?.value.trim();
       const geminiKey = this.modalEl.querySelector('#gemini-key-input')?.value.trim();
 
-      // Save Gemini Key
+      // Save Gemini Key & Model
+      const modelSelect = this.modalEl.querySelector('#gemini-model-select')?.value;
+      if (modelSelect) {
+        localStorage.setItem('kp_gemini_model_name', modelSelect);
+      } else {
+        localStorage.removeItem('kp_gemini_model_name');
+      }
+
       if (geminiKey) {
         localStorage.setItem('kp_gemini_api_key', geminiKey);
       } else {
