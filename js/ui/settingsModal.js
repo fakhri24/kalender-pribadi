@@ -78,11 +78,9 @@ export class SettingsModal {
                   ⬇️ Ambil Data dari Cloud ke Device Ini
                 </button>
               ` : ''}
-              ${savedConfig ? `
-                <button type="button" class="btn btn-sm btn-outline" id="share-setup-btn" title="Salin tautan setup untuk langsung membuka konfigurasi di HP tanpa mengetik manual">
-                  📲 Salin Link Setup untuk HP
-                </button>
-              ` : ''}
+              <button type="button" class="btn btn-sm btn-outline" id="share-setup-btn" title="Salin tautan setup untuk langsung membuka konfigurasi di HP tanpa mengetik manual">
+                📲 Salin Link Setup untuk HP
+              </button>
             </div>
           </div>
 
@@ -157,12 +155,29 @@ export class SettingsModal {
 
     // Share Setup Link to Mobile
     shareSetupBtn?.addEventListener('click', () => {
-      const cfg = firebaseService.getSavedConfig();
-      const geminiKey = localStorage.getItem('kp_gemini_api_key') || '';
-      const geminiModel = localStorage.getItem('kp_gemini_model_name') || '';
+      let cfg = firebaseService.getSavedConfig();
+      const configInput = this.modalEl.querySelector('#firebase-config-input');
+      const configStr = configInput?.value.trim();
+
+      if (!cfg && configStr) {
+        try {
+          let jsonClean = configStr;
+          if (jsonClean.includes('=')) {
+            jsonClean = jsonClean.substring(jsonClean.indexOf('{'), jsonClean.lastIndexOf('}') + 1);
+          }
+          cfg = JSON.parse(jsonClean);
+          firebaseService.saveConfig(cfg);
+        } catch (e) {
+          // ignore
+        }
+      }
+
+      const geminiKey = this.modalEl.querySelector('#gemini-key-input')?.value.trim() || localStorage.getItem('kp_gemini_api_key') || '';
+      const geminiModel = this.modalEl.querySelector('#gemini-model-select')?.value || localStorage.getItem('kp_gemini_model_name') || '';
 
       if (!cfg) {
-        alert('Simpan konfigurasi Firebase terlebih dahulu sebelum membagikan link setup.');
+        alert('⚠️ Tempel atau simpan konfigurasi Firebase terlebih dahulu di form bawah sebelum membuat link setup HP.');
+        configInput?.focus();
         return;
       }
 
