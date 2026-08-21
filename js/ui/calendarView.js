@@ -18,7 +18,7 @@ export class CalendarView {
     this.activeCategoryFilter = 'all';
 
     this.startHour = 3;  // 03:00
-    this.endHour = 23;   // 23:00
+    this.endHour = 24;   // 24:00 (midnight)
     this.hourHeight = Number(localStorage.getItem('kp_hour_height')) || 80; // px per 60 minutes
   }
 
@@ -142,15 +142,29 @@ export class CalendarView {
 
       // Render Event Cards
       dayEvents.forEach(evt => {
-        const startMins = (typeof evt.startMinutes === 'number' && !isNaN(evt.startMinutes))
+        const gridStartMinutes = this.startHour * 60;
+        const gridEndMinutes = this.endHour * 60;
+
+        const eventStartMins = (typeof evt.startMinutes === 'number' && !isNaN(evt.startMinutes))
           ? evt.startMinutes
           : timeToMinutes(evt.startTime);
-        const durationMins = evt.durationMinutes || (timeToMinutes(evt.endTime) - startMins) || 60;
-        const topPx = this.calculateTopPx(startMins);
-        const isCompact = durationMins <= 25;
+        const eventEndMins = (typeof evt.endMinutes === 'number' && !isNaN(evt.endMinutes))
+          ? evt.endMinutes
+          : (timeToMinutes(evt.endTime) || (eventStartMins + (evt.durationMinutes || 60)));
+
+        // Clip event to the visible timegrid boundaries
+        const visibleStartMins = Math.max(gridStartMinutes, eventStartMins);
+        const visibleEndMins = Math.min(gridEndMinutes, eventEndMins);
+
+        // If event is outside the grid bounds, skip rendering in timegrid
+        if (visibleEndMins <= visibleStartMins) return;
+
+        const visibleDurationMins = visibleEndMins - visibleStartMins;
+        const topPx = ((visibleStartMins - gridStartMinutes) / 60) * this.hourHeight;
+        const isCompact = (evt.durationMinutes <= 25) || (visibleDurationMins <= 25);
         const heightPx = isCompact 
-          ? Math.max(26, (durationMins / 60) * this.hourHeight - 1)
-          : Math.max(36, (durationMins / 60) * this.hourHeight - 2);
+          ? Math.max(26, (visibleDurationMins / 60) * this.hourHeight - 1)
+          : Math.max(34, (visibleDurationMins / 60) * this.hourHeight - 2);
 
         const catObj = CATEGORIES[evt.category.toUpperCase()] || CATEGORIES.HABIT;
         const bgCol = evt.color || catObj.color;
