@@ -35,7 +35,7 @@ export class AIChatDrawer {
               <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary);">Asisten AI Al-Bayan</div>
               <div style="font-size: 0.72rem; color: #10B981; display: flex; align-items: center; gap: 4px;">
                 <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #10B981;"></span>
-                Gemini 1.5 Flash • Tool Calling Aktif
+                <span id="ai-model-name-badge">${this.getModelDisplayName()}</span> • Tool Calling Aktif
               </div>
             </div>
           </div>
@@ -203,6 +203,22 @@ export class AIChatDrawer {
       this.appendMessage('assistant', `⚠️ Maaf, terjadi kesalahan: ${err.message}`);
     } finally {
       this.isProcessing = false;
+      this.updateModelBadge();
+    }
+  }
+
+  getModelDisplayName() {
+    const raw = localStorage.getItem('kp_gemini_model_name') || 'gemini-3.5-flash-lite';
+    return raw
+      .split('-')
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+  }
+
+  updateModelBadge() {
+    const badge = this.container.querySelector('#ai-model-name-badge');
+    if (badge) {
+      badge.textContent = this.getModelDisplayName();
     }
   }
 

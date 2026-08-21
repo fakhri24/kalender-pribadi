@@ -386,16 +386,16 @@ Gaya Komunikasi:
         console.log('[Gemini API] Available models for key:', available);
 
         const candidates = [
+          'gemini-3.5-flash-lite',
+          'gemini-3.1-flash-lite',
           'gemini-3.6-flash',
-          'gemini-3.0-flash',
+          'gemini-3.7-flash',
+          'gemini-3.5-flash',
           'gemini-2.5-flash',
+          'gemini-3-flash',
+          'gemini-2.5-flash-lite',
           'gemini-2.0-flash',
-          'gemini-1.5-flash-latest',
-          'gemini-1.5-flash',
-          'gemini-3.6-pro',
-          'gemini-2.5-pro',
-          'gemini-1.5-pro-latest',
-          'gemini-pro'
+          'gemini-1.5-flash-latest'
         ];
 
         for (const cand of candidates) {
@@ -414,7 +414,7 @@ Gaya Komunikasi:
       console.warn('Gagal memuat list models dari Gemini API:', e);
     }
 
-    return 'gemini-3.6-flash';
+    return 'gemini-3.5-flash-lite';
   }
 
   /**
