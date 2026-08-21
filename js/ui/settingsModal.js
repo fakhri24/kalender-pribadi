@@ -42,13 +42,18 @@ export class SettingsModal {
           <!-- Cloud Sync Status Card -->
           <div style="background: var(--bg-hover); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px;">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-              <div>
+              <div style="flex: 1; min-width: 200px;">
                 <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
                   ${isCloudActive ? '☁️ Cloud Sync Aktif (Multi-Device)' : '💾 Mode Penyimpanan Lokal (Offline)'}
                 </div>
                 <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
-                  ${user ? `Terhubung sebagai: <strong>${user.displayName || user.email}</strong>` : 'Masuk dengan Google untuk mengaktifkan sinkronisasi otomatis antar laptop & HP.'}
+                  ${user ? `Terhubung sebagai: <strong>${user.displayName || user.email}</strong>` : 'Masuk dengan Google untuk sinkronisasi otomatis antar laptop & HP.'}
                 </div>
+                ${!firebaseService.isInitialized ? `
+                  <div style="font-size: 0.76rem; color: #D97706; margin-top: 4px; font-weight: 600;">
+                    ⚠️ Konfigurasi Firebase belum aktif di perangkat ini.
+                  </div>
+                ` : ''}
               </div>
 
               <div>
@@ -57,23 +62,28 @@ export class SettingsModal {
                     Keluar (Logout)
                   </button>
                 ` : `
-                  <button type="button" class="btn btn-primary btn-sm" id="google-login-btn" ${!firebaseService.isInitialized ? 'disabled title="Isi Firebase config terlebih dahulu"' : ''}>
+                  <button type="button" class="btn btn-primary btn-sm" id="google-login-btn">
                     🔑 Masuk dengan Google
                   </button>
                 `}
               </div>
             </div>
 
-            ${isCloudActive ? `
-              <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-color); display: flex; gap: 8px; flex-wrap: wrap;">
+            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-color); display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+              ${isCloudActive ? `
                 <button type="button" class="btn btn-sm btn-success" id="push-to-cloud-btn">
                   ⬆️ Unggah Data Lokal ke Cloud
                 </button>
                 <button type="button" class="btn btn-sm btn-outline" id="pull-from-cloud-btn">
                   ⬇️ Ambil Data dari Cloud ke Device Ini
                 </button>
-              </div>
-            ` : ''}
+              ` : ''}
+              ${savedConfig ? `
+                <button type="button" class="btn btn-sm btn-outline" id="share-setup-btn" title="Salin tautan setup untuk langsung membuka konfigurasi di HP tanpa mengetik manual">
+                  📲 Salin Link Setup untuk HP
+                </button>
+              ` : ''}
+            </div>
           </div>
 
           <!-- Gemini AI API Key Section -->
@@ -140,19 +150,98 @@ export class SettingsModal {
     const logoutBtn = this.modalEl.querySelector('#google-logout-btn');
     const pushCloudBtn = this.modalEl.querySelector('#push-to-cloud-btn');
     const pullCloudBtn = this.modalEl.querySelector('#pull-from-cloud-btn');
+    const shareSetupBtn = this.modalEl.querySelector('#share-setup-btn');
 
     closeBtn?.addEventListener('click', () => this.close());
     cancelBtn?.addEventListener('click', () => this.close());
 
+    // Share Setup Link to Mobile
+    shareSetupBtn?.addEventListener('click', () => {
+      const cfg = firebaseService.getSavedConfig();
+      const geminiKey = localStorage.getItem('kp_gemini_api_key') || '';
+      const geminiModel = localStorage.getItem('kp_gemini_model_name') || '';
+
+      if (!cfg) {
+        alert('Simpan konfigurasi Firebase terlebih dahulu sebelum membagikan link setup.');
+        return;
+      }
+
+      const payload = { fc: cfg };
+      if (geminiKey) payload.gk = geminiKey;
+      if (geminiModel) payload.gm = geminiModel;
+
+      const encoded = encodeURIComponent(btoa(JSON.stringify(payload)));
+      const url = `${window.location.origin}${window.location.pathname}#setup=${encoded}`;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+          alert('✅ Link Setup HP Berhasil Disalin!\n\nKirim link ini ke WhatsApp/Telegram, lalu buka di browser HP Anda (Chrome/Safari). Konfigurasi Firebase & AI akan langsung terpasang otomatis dan Anda bisa langsung login Google!');
+        }).catch(() => {
+          prompt('Salin link setup berikut dan buka di browser HP Anda:', url);
+        });
+      } else {
+        prompt('Salin link setup berikut dan buka di browser HP Anda:', url);
+      }
+    });
+
     // Google Login
     loginBtn?.addEventListener('click', async () => {
+      const configInput = this.modalEl.querySelector('#firebase-config-input');
+      const configStr = configInput?.value.trim();
+
+      // If Firebase is not yet initialized, check if config is provided in textarea
+      if (!firebaseService.isInitialized) {
+        if (configStr) {
+          try {
+            let jsonClean = configStr;
+            if (jsonClean.includes('=')) {
+              jsonClean = jsonClean.substring(jsonClean.indexOf('{'), jsonClean.lastIndexOf('}') + 1);
+            }
+            const parsed = JSON.parse(jsonClean);
+            const success = await firebaseService.init(parsed);
+            if (!success) {
+              alert('⚠️ Konfigurasi Firebase tidak valid. Pastikan format JSON benar.');
+              configInput?.focus();
+              return;
+            }
+          } catch (e) {
+            alert('⚠️ Format JSON Firebase tidak valid. Pastikan formatnya adalah JSON objek yang benar.');
+            configInput?.focus();
+            return;
+          }
+        } else {
+          alert('⚠️ Konfigurasi Firebase belum diisi di perangkat ini!\n\nCara mudah mengaktifkan login Google di HP:\n1. Buka Kalender di Laptop tempat Anda sudah setup, buka menu "Cloud & AI", klik "📲 Salin Link Setup untuk HP", lalu kirim & buka link tersebut di HP ini; ATAU\n2. Tempel objek firebaseConfig di kolom bawah ini lalu klik "Simpan Konfigurasi".');
+          configInput?.focus();
+          configInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          configInput?.classList.add('highlight-pulse');
+          setTimeout(() => configInput?.classList.remove('highlight-pulse'), 2500);
+          return;
+        }
+      }
+
       try {
+        if (loginBtn) {
+          loginBtn.disabled = true;
+          loginBtn.innerHTML = '🔄 Menghubungkan...';
+        }
+
         const user = await firebaseService.loginWithGoogle();
-        alert(`Berhasil masuk sebagai ${user.displayName || user.email}! Cloud Sync kini aktif.`);
-        this.render();
-        if (this.onStateChange) this.onStateChange();
+        if (user) {
+          alert(`Berhasil masuk sebagai ${user.displayName || user.email}! Cloud Sync kini aktif.`);
+          this.render();
+          if (this.onStateChange) this.onStateChange();
+        }
       } catch (err) {
-        alert(`Gagal login Google: ${err.message}`);
+        console.error('Google login error:', err);
+        let msg = err.message || 'Terjadi kesalahan saat login.';
+        if (err.code === 'auth/unauthorized-domain') {
+          msg = `Domain "${window.location.hostname}" belum didaftarkan di Firebase Console (Authentication > Settings > Authorized Domains).\n\nTambahkan domain ini ke daftar Authorized Domains di Firebase Console.`;
+        }
+        alert(`Gagal login Google: ${msg}`);
+        if (loginBtn) {
+          loginBtn.disabled = false;
+          loginBtn.innerHTML = '🔑 Masuk dengan Google';
+        }
       }
     });
 

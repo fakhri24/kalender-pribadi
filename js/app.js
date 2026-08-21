@@ -33,6 +33,7 @@ class App {
     this.events = [];
     this.currentTheme = localStorage.getItem('kp_theme') || 'light';
 
+    this.checkUrlSetup();
     this.initDOM();
     this.initComponents();
     this.initTheme();
@@ -441,6 +442,35 @@ class App {
       this.dom.cloudSyncStatus.innerHTML = `💾 Mode Lokal`;
       this.dom.cloudSyncStatus.style.color = 'var(--accent-primary)';
       this.dom.cloudSyncStatus.title = `Klik untuk mengaktifkan Cloud Sync (Multi-Device)`;
+    }
+  }
+
+  checkUrlSetup() {
+    try {
+      const hash = window.location.hash;
+      if (hash && hash.includes('setup=')) {
+        const match = hash.match(/setup=([^&]+)/);
+        if (match && match[1]) {
+          const raw = atob(decodeURIComponent(match[1]));
+          const setup = JSON.parse(raw);
+          if (setup.fc) {
+            localStorage.setItem('kp_firebase_config', JSON.stringify(setup.fc));
+            firebaseService.init(setup.fc);
+          }
+          if (setup.gk) {
+            localStorage.setItem('kp_gemini_api_key', setup.gk);
+          }
+          if (setup.gm) {
+            localStorage.setItem('kp_gemini_model_name', setup.gm);
+          }
+          window.history.replaceState(null, '', window.location.pathname + window.location.search);
+          setTimeout(() => {
+            alert('🎉 Setup Berhasil!\n\nKonfigurasi Firebase & Gemini AI berhasil diimpor otomatis ke perangkat ini. Sekarang Anda dapat login Google untuk mengaktifkan Cloud Sync!');
+          }, 300);
+        }
+      }
+    } catch (e) {
+      console.warn('Gagal membaca URL setup:', e);
     }
   }
 

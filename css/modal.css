@@ -268,3 +268,46 @@
   align-items: center;
   gap: 6px;
 }
+
+/* Form Highlight Pulse Animation */
+@keyframes highlight-glow {
+  0%, 100% { border-color: var(--border-color); box-shadow: none; }
+  50% { border-color: var(--accent-primary); box-shadow: 0 0 0 4px var(--accent-glow); }
+}
+
+.highlight-pulse {
+  animation: highlight-glow 0.8s ease-in-out 3;
+}
+
+/* Mobile Modal Enhancements */
+@media (max-width: 600px) {
+  .modal-overlay {
+    padding: 10px;
+    align-items: flex-end;
+  }
+
+  .modal-card {
+    max-height: 88vh;
+    max-height: 88dvh;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-header {
+    padding: 12px 16px;
+  }
+
+  .modal-body {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .modal-footer {
+    padding: 10px 16px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

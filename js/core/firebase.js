@@ -13,6 +13,8 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut,
   onAuthStateChanged
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
@@ -100,6 +102,18 @@ class FirebaseService {
       this.isInitialized = true;
       this.saveConfig(config);
 
+      // Check redirect result (for mobile Google Sign-In redirect flow)
+      getRedirectResult(this.auth)
+        .then((result) => {
+          if (result && result.user) {
+            this.currentUser = result.user;
+            this.authCallbacks.forEach(cb => cb(result.user));
+          }
+        })
+        .catch((redirectErr) => {
+          console.warn('Firebase getRedirectResult error:', redirectErr);
+        });
+
       // Listen for auth changes
       onAuthStateChanged(this.auth, (user) => {
         this.currentUser = user;
@@ -117,14 +131,14 @@ class FirebaseService {
   onAuthChange(callback) {
     if (typeof callback === 'function') {
       this.authCallbacks.push(callback);
-      if (this.isInitialized && this.auth) {
+      if (this.isInitialized && this.auth && this.currentUser) {
         callback(this.currentUser);
       }
     }
   }
 
   /**
-   * Login with Google Popup
+   * Login with Google (Popup with automatic mobile redirect fallback)
    */
   async loginWithGoogle() {
     if (!this.isInitialized || !this.auth) {
@@ -134,9 +148,33 @@ class FirebaseService {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
-    const result = await signInWithPopup(this.auth, provider);
-    this.currentUser = result.user;
-    return result.user;
+    const userAgent = navigator.userAgent || '';
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+
+    try {
+      // Try popup first (works on desktop and some modern mobile browsers)
+      const result = await signInWithPopup(this.auth, provider);
+      this.currentUser = result.user;
+      return result.user;
+    } catch (popupErr) {
+      console.warn('Google signInWithPopup failed, inspecting fallback:', popupErr);
+
+      // If popup is blocked, cancelled, or running on mobile, fallback to redirect
+      const isPopupBlockedOrMobile = isMobile || [
+        'auth/popup-blocked',
+        'auth/popup-closed-by-user',
+        'auth/cancelled-popup-request',
+        'auth/operation-not-supported-in-this-environment'
+      ].includes(popupErr.code);
+
+      if (isPopupBlockedOrMobile) {
+        console.log('Menggunakan signInWithRedirect untuk autentikasi mobile...');
+        await signInWithRedirect(this.auth, provider);
+        return null;
+      }
+
+      throw popupErr;
+    }
   }
 
   /**
