@@ -70,7 +70,9 @@ kalender-pribadi/
 │   ├── app.js              # Main application coordinator, update listener & state initialization
 │   ├── config/
 │   │   ├── constants.js    # Master schedule templates, category configs
-│   │   └── coordinates.js  # Location data (Albayan Goalpara)
+│   │   ├── coordinates.js  # Location data (Albayan Goalpara)
+│   │   ├── credentials.js  # (Gitignored) Native embedded Firebase & Gemini credentials
+│   │   └── credentials.example.js # Template reference for credentials
 │   ├── core/
 │   │   ├── prayerEngine.js # Mathematical calculation of dynamic prayer times
 │   │   ├── scheduler.js    # Rule-based auto-placement & overlap resolver
@@ -106,3 +108,5 @@ kalender-pribadi/
 4. **Time & Precision**: Semua manipulasi waktu internal menggunakan format menit sejak tengah malam (*minutes from midnight: 0–1439*) dan dikonversi dengan zona waktu WIB (*Asia/Jakarta*).
 5. **Mobile & Desktop Responsive**: Kalender nyaman dilihat di smartphone (tampilan Harian / Agenda / Chat Drawer full) maupun di laptop/desktop (Time Grid 7 Kolom).
 6. **Zero-Stale-Cache Guarantee**: Setiap rilis baru wajib menaikkan versi pada `version.json` dan query string aset di `index.html`. Engine `versionChecker.js` menggunakan `version.json` sebagai *Single Source of Truth* tanpa duplikasi hardcode di JS.
+7. **Cloud-First & Multi-Device Sync**: Cloud Firestore adalah *Single Primary Storage Layer* privat dengan *Persistent Offline Cache*. Seluruh pembaruan state tersinkronisasi otomatis saat user login Google.
+8. **Credential Security & Gitignore**: Kredensial pribadi (`firebaseConfig` dan `GEMINI_API_KEY`) disimpan pada `js/config/credentials.js` yang wajib masuk `.gitignore`, dengan `credentials.example.js` sebagai template publik.
