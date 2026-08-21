@@ -11,6 +11,7 @@ import { LoggerModal } from './ui/loggerModal.js';
 import { EventEditorModal } from './ui/eventEditor.js';
 import { ReviewViewModal } from './ui/reviewView.js';
 import { SettingsModal } from './ui/settingsModal.js';
+import { AIChatDrawer } from './ui/aiChatDrawer.js';
 import { firebaseService } from './core/firebase.js';
 import { CalendarEvent } from './models/Event.js';
 import { ExecutionLog } from './models/ExecutionLog.js';
@@ -64,7 +65,8 @@ class App {
       loggerModalEl: document.getElementById('logger-modal'),
       editorModalEl: document.getElementById('editor-modal'),
       reviewModalEl: document.getElementById('review-modal'),
-      settingsModalEl: document.getElementById('settings-modal')
+      settingsModalEl: document.getElementById('settings-modal'),
+      aiAssistantContainer: document.getElementById('ai-assistant-container')
     };
   }
 
@@ -98,6 +100,12 @@ class App {
     this.settingsModal = new SettingsModal(
       this.dom.settingsModalEl,
       () => this.handleCloudStateChange()
+    );
+
+    // 3. AI Copilot Chat Drawer
+    this.aiChatDrawer = new AIChatDrawer(
+      this.dom.aiAssistantContainer,
+      this
     );
   }
 
