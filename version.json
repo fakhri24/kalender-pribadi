@@ -1,5 +1,5 @@
 {
-  "version": "1.0.10",
-  "releasedAt": "2026-08-21T15:06:00+07:00",
-  "changeNotes": "Penambahan jadwal Piket Subuh Selasa & Sabtu ba'da Subuh (durasi 30 menit)"
+  "version": "1.0.11",
+  "releasedAt": "2026-08-21T15:17:30+07:00",
+  "changeNotes": "Penyesuaian jadwal sarapan pagi (05:40 ba'da KBM/Piket Subuh) dan rutinitas Shaum Sunnah Kamis (Sahur, Al-Ma'tsurat, Takjil, & Buka Shaum ba'da Maghrib)"
 }
