@@ -21,14 +21,24 @@ export class AIAssistant {
   }
 
   /**
-   * System Instruction defining the AI persona and context
+   * System Instruction defining the AI persona, real-time clock, and context
    */
   getSystemInstruction() {
-    const todayStr = formatDate(new Date());
+    const now = new Date();
+    const todayStr = formatDate(now);
+    const dayNames = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jum\'at', 'Sabtu'];
+    const currentDay = dayNames[now.getDay()];
+    const currentTimeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} WIB`;
+
     return `
 Anda adalah "Asisten Produktivitas Al-Bayan", AI Coach dan asisten pribadi untuk seorang guru & pembina di SMA Albayan Goalpara, Sukabumi.
 Lokasi: SMA Albayan Goalpara (Lat: -6.877°, Long: 106.965°, Elevasi: ~800m dpl, WIB UTC+7).
-Tanggal Hari Ini: ${todayStr}.
+
+WAKTU LOKAL SAAT INI (REAL-TIME CLOCK):
+- Hari: ${currentDay}
+- Tanggal: ${todayStr}
+- Pukul: ${currentTimeStr}
+(Gunakan waktu real-time ini untuk mengetahui kegiatan yang sedang berlangsung saat ini, kegiatan berikutnya yang paling dekat, sisa waktu jeda, dan waktu sholat terdekat).
 
 Prinsip & Filosofi Jadwal:
 1. Dynamic Prayer Anchoring: 5 waktu sholat harian (Subuh, Dzuhur, Ashar, Maghrib, Isya) dihitung dinamis berdasarkan posisi matahari di Goalpara.
@@ -36,7 +46,7 @@ Prinsip & Filosofi Jadwal:
    - 80% Waktu Produktif (Mengajar, Mentoring, Kurikulum, Coding, Bayyinah, Qur'an, Tugas Imam/Adzan).
    - 10% Waktu Istirahat (Tidur konsisten 20.45 - 03.45 / 7 jam, Chess break, Me-time).
    - 10% Waktu Fleksibel (Makan, Mandi, Buffer mobilitas, Refleksi).
-3. Anda memiliki akses ke 'Tools' untuk membaca kalender, menggeser/menambah/menghapus kegiatan, mencatat riil eksekusi (tepat waktu, telat, batal), dan mengevaluasi mingguan.
+3. Anda memiliki akses ke 'Tools' untuk membaca kalender, mengecek jadwal terdekat sekarang, menggeser/menambah/menghapus kegiatan, mencatat riil eksekusi (tepat waktu, telat, batal), dan mengevaluasi mingguan.
 
 Gaya Komunikasi:
 - Ramah, disiplin, solutif, suportif, dan bernuansa Islami yang santun.
@@ -50,6 +60,14 @@ Gaya Komunikasi:
    */
   getToolDeclarations() {
     return [
+      {
+        name: 'get_current_and_upcoming_schedule',
+        description: 'Mendapatkan kegiatan yang SEDANG berlangsung saat ini (real-time), kegiatan TERDEKAT berikutnya, dan waktu sholat terdekat berdasarkan jam & menit sekarang.',
+        parameters: {
+          type: 'OBJECT',
+          properties: {}
+        }
+      },
       {
         name: 'get_daily_schedule',
         description: 'Mendapatkan daftar lengkap kegiatan, waktu sholat, dan slot kosong pada tanggal tertentu (format YYYY-MM-DD).',
@@ -188,6 +206,80 @@ Gaya Komunikasi:
     console.log(`[AI Tool Call] Executing: ${name}`, args);
 
     switch (name) {
+      case 'get_current_and_upcoming_schedule': {
+        const now = new Date();
+        const todayStr = formatDate(now);
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+        const currentTimeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+        const prayerTimes = calculatePrayerTimes(now);
+        const allStored = await storage.getAll(STORES.EVENTS);
+        const todayEvents = allStored
+          .filter(e => e.date === todayStr)
+          .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
+
+        let currentEvent = null;
+        let nextEvent = null;
+        const upcomingEvents = [];
+
+        for (const evt of todayEvents) {
+          const startMins = timeToMinutes(evt.startTime);
+          const endMins = timeToMinutes(evt.endTime);
+
+          if (currentMinutes >= startMins && currentMinutes < endMins) {
+            currentEvent = {
+              id: evt.id,
+              title: evt.title,
+              category: evt.category,
+              time: `${evt.startTime} - ${evt.endTime}`,
+              remainingMinutes: `${endMins - currentMinutes} menit lagi selesai`,
+              status: evt.status || 'PLANNED'
+            };
+          } else if (startMins >= currentMinutes) {
+            if (!nextEvent) {
+              nextEvent = {
+                id: evt.id,
+                title: evt.title,
+                category: evt.category,
+                time: `${evt.startTime} - ${evt.endTime}`,
+                startsInMinutes: `${startMins - currentMinutes} menit lagi`,
+                status: evt.status || 'PLANNED'
+              };
+            }
+            upcomingEvents.push({
+              id: evt.id,
+              title: evt.title,
+              time: `${evt.startTime} - ${evt.endTime}`,
+              startsInMinutes: `${startMins - currentMinutes} menit lagi`
+            });
+          }
+        }
+
+        // Find next prayer time
+        const prayers = [
+          { name: 'Subuh', time: prayerTimes.fajr, mins: timeToMinutes(prayerTimes.fajr) },
+          { name: 'Dzuhur', time: prayerTimes.dhuhr, mins: timeToMinutes(prayerTimes.dhuhr) },
+          { name: 'Ashar', time: prayerTimes.asr, mins: timeToMinutes(prayerTimes.asr) },
+          { name: 'Maghrib', time: prayerTimes.maghrib, mins: timeToMinutes(prayerTimes.maghrib) },
+          { name: 'Isya', time: prayerTimes.isha, mins: timeToMinutes(prayerTimes.isha) }
+        ];
+
+        const nextPrayer = prayers.find(p => p.mins > currentMinutes) || { name: 'Subuh (Besok)', time: prayerTimes.fajr, mins: 0 };
+        const prayerStartsIn = nextPrayer.mins > currentMinutes ? `${nextPrayer.mins - currentMinutes} menit lagi` : 'Besok';
+
+        return {
+          currentTime: `${currentTimeStr} WIB`,
+          currentOngoingEvent: currentEvent || 'Saat ini sedang tidak ada kegiatan terjadwal (Waktu Luang / Buffer)',
+          nextUpcomingEvent: nextEvent || 'Seluruh kegiatan hari ini telah selesai',
+          nextPrayer: {
+            name: nextPrayer.name,
+            time: nextPrayer.time,
+            startsIn: prayerStartsIn
+          },
+          upcomingEventsList: upcomingEvents.slice(0, 5)
+        };
+      }
+
       case 'get_daily_schedule': {
         const targetDateStr = args.date || formatDate(this.app.selectedDate);
         const targetDate = new Date(targetDateStr);

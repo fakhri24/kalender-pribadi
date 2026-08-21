@@ -60,6 +60,7 @@ export class AIChatDrawer {
 
           <!-- Quick Suggestion Chips -->
           <div class="ai-suggestion-chips" id="ai-suggestion-chips">
+            <button class="ai-chip" data-prompt="Apa kegiatan saya sekarang dan apa jadwal terdekat berikutnya?">⏰ Jadwal Terdekat Sekarang</button>
             <button class="ai-chip" data-prompt="Bagaimana jadwal dan waktu sholat hari ini?">📅 Jadwal Hari Ini</button>
             <button class="ai-chip" data-prompt="Bagaimana keseimbangan rasio produktif 80:10:10 minggu ini?">📊 Analisis Rasio Minggu Ini</button>
             <button class="ai-chip" data-prompt="Tadi kegiatan barusan selesai tepat waktu. Tolong catat statusnya.">✅ Catat Tepat Waktu</button>
