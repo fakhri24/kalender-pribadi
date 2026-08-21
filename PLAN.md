@@ -171,3 +171,10 @@ Target alokasi mingguan untuk slot fleksibel/mandiri (Rasio 80:10:10):
   - `log_event_execution` (Catat status eksekusi & alasan)
   - `get_weekly_productivity_summary` (Coaching rasio 80:10:10)
 - [x] Penguncian zona waktu presisi WIB (*Asia/Jakarta*) dengan metadata real-time di setiap percakapan.
+
+### Phase 8: Mobile UX Resilience, Setup Sharing & Auto Cache-Buster Engine `[DONE]`
+- [x] **Mobile Google Auth Resilience**: Integrasi fallback otomatis `signInWithPopup` -> `signInWithRedirect` dan pemrosesan `getRedirectResult` untuk mengatasi pemblokiran popup di browser HP (iOS Safari, Android Chrome, WebView).
+- [x] **Instant Mobile Setup Sharing**: Fitur `📲 Salin Link Setup untuk HP` yang mengenkripsi konfigurasi Firebase & API key ke dalam URL hash (`#setup=...`) untuk setup instan tanpa input manual di HP.
+- [x] **Auto-Version Checker**: Pemantauan rilis baru via `version.json` dengan notifikasi toast *update banner* otomatis saat tab aktif.
+- [x] **Cache-Busting Architecture**: Implementasi query string versioning (`?v=1.0.4`), anti-cache meta tags, dan konfigurasi `firebase.json` headers.
+- [x] **One-Click Cache Purge**: Tombol *🔄 Bersihkan Cache & Update* di menu pengaturan untuk menghapus `CacheStorage` dan memuat ulang kode terkini.
