@@ -1,0 +1,5 @@
+{
+  "version": "1.0.4",
+  "releasedAt": "2026-08-21T13:06:00+07:00",
+  "changeNotes": "Peningkatan sinkronisasi mobile, redirect login Google, dan auto cache buster"
+}

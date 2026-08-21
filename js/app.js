@@ -25,6 +25,7 @@ import {
   formatIndonesianDate,
   addDays
 } from './utils/dateUtils.js';
+import { checkForAppUpdate } from './utils/versionChecker.js';
 
 class App {
   constructor() {
@@ -130,6 +131,14 @@ class App {
     this.updateRatioBar();
     this.calendarView.setSelectedDate(this.selectedDate);
     this.calendarView.setEvents(this.events);
+
+    // Check for application updates
+    checkForAppUpdate();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        checkForAppUpdate();
+      }
+    });
   }
 
   /**

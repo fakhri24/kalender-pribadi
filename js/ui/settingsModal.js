@@ -5,6 +5,7 @@
 
 import { firebaseService } from '../core/firebase.js';
 import { storage, STORES } from '../core/storage.js';
+import { CURRENT_APP_VERSION, forceReloadApp } from '../utils/versionChecker.js';
 
 export class SettingsModal {
   constructor(modalElement, onStateChangeCallback) {
@@ -130,9 +131,17 @@ export class SettingsModal {
           </div>
         </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline" id="cancel-settings-btn">Tutup</button>
-          <button type="button" class="btn btn-primary" id="save-settings-btn">💾 Simpan Konfigurasi</button>
+        <div class="modal-footer" style="justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button type="button" class="btn btn-outline btn-sm" id="force-update-btn" title="Bersihkan cache browser dan muat ulang aplikasi ke versi terbaru">
+              🔄 Bersihkan Cache & Update
+            </button>
+            <span style="font-size: 0.74rem; color: var(--text-muted); font-weight: 600;">v${CURRENT_APP_VERSION}</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-outline" id="cancel-settings-btn">Tutup</button>
+            <button type="button" class="btn btn-primary" id="save-settings-btn">💾 Simpan Konfigurasi</button>
+          </div>
         </div>
       </div>
     `;
@@ -149,9 +158,17 @@ export class SettingsModal {
     const pushCloudBtn = this.modalEl.querySelector('#push-to-cloud-btn');
     const pullCloudBtn = this.modalEl.querySelector('#pull-from-cloud-btn');
     const shareSetupBtn = this.modalEl.querySelector('#share-setup-btn');
+    const forceUpdateBtn = this.modalEl.querySelector('#force-update-btn');
 
     closeBtn?.addEventListener('click', () => this.close());
     cancelBtn?.addEventListener('click', () => this.close());
+
+    // Force clear cache and update app
+    forceUpdateBtn?.addEventListener('click', async () => {
+      if (confirm('Aplikasi akan membersihkan cache memori dan memuat ulang versi terbaru dari server. Lanjutkan?')) {
+        await forceReloadApp();
+      }
+    });
 
     // Share Setup Link to Mobile
     shareSetupBtn?.addEventListener('click', () => {
