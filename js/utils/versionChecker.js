@@ -7,8 +7,9 @@ export const CURRENT_APP_VERSION = '1.0.5';
 
 /**
  * Force clear cache and hard reload the application
+ * @param {string} [targetVersion]
  */
-export async function forceReloadApp() {
+export async function forceReloadApp(targetVersion = null) {
   try {
     // Clear CacheStorage if supported
     if ('caches' in window) {
@@ -27,10 +28,14 @@ export async function forceReloadApp() {
     console.warn('Error clearing caches:', err);
   }
 
-  // Update stored version and reload with timestamp cache-buster
-  localStorage.setItem('kp_app_version', CURRENT_APP_VERSION);
-  const cleanUrl = window.location.origin + window.location.pathname + '?_t=' + Date.now();
-  window.location.href = cleanUrl;
+  // Update stored version to prevent banner loop
+  const newVer = targetVersion || CURRENT_APP_VERSION;
+  localStorage.setItem('kp_app_version', newVer);
+
+  // Reload with cache-buster query parameter
+  const url = new URL(window.location.href);
+  url.searchParams.set('_v', Date.now().toString());
+  window.location.replace(url.toString());
 }
 
 /**
@@ -49,17 +54,19 @@ export async function checkForAppUpdate() {
     if (!res.ok) return;
 
     const data = await res.json();
-    const storedVersion = localStorage.getItem('kp_app_version');
+    if (!data.version) return;
 
-    if (!storedVersion) {
-      localStorage.setItem('kp_app_version', data.version || CURRENT_APP_VERSION);
+    // If server version matches current running code, sync and dismiss banner
+    if (data.version === CURRENT_APP_VERSION) {
+      localStorage.setItem('kp_app_version', CURRENT_APP_VERSION);
+      const banner = document.getElementById('app-update-banner');
+      if (banner) banner.remove();
       return;
     }
 
-    if (data.version && data.version !== storedVersion && data.version !== CURRENT_APP_VERSION) {
-      console.log(`[VersionChecker] New version detected: ${data.version} (current: ${CURRENT_APP_VERSION})`);
-      showUpdateBanner(data);
-    }
+    // Only show banner if server version is strictly newer/different from CURRENT_APP_VERSION
+    console.log(`[VersionChecker] New version detected: ${data.version} (current running: ${CURRENT_APP_VERSION})`);
+    showUpdateBanner(data);
   } catch (err) {
     // Ignore network failure when offline
   }
@@ -69,11 +76,14 @@ export async function checkForAppUpdate() {
  * Render a non-intrusive floating update notification
  */
 function showUpdateBanner(updateData) {
-  if (document.getElementById('app-update-banner')) return;
+  let banner = document.getElementById('app-update-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'app-update-banner';
+    banner.className = 'app-update-banner';
+    document.body.appendChild(banner);
+  }
 
-  const banner = document.createElement('div');
-  banner.id = 'app-update-banner';
-  banner.className = 'app-update-banner';
   banner.innerHTML = `
     <div class="update-banner-content">
       <span class="update-banner-icon">⚡</span>
@@ -90,11 +100,10 @@ function showUpdateBanner(updateData) {
     </div>
   `;
 
-  document.body.appendChild(banner);
-
-  document.getElementById('apply-update-btn')?.addEventListener('click', () => {
+  document.getElementById('apply-update-btn')?.addEventListener('click', async () => {
     localStorage.setItem('kp_app_version', updateData.version);
-    forceReloadApp();
+    banner.remove();
+    await forceReloadApp(updateData.version);
   });
 
   document.getElementById('dismiss-update-btn')?.addEventListener('click', () => {
