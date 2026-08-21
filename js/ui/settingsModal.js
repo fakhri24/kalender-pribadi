@@ -97,10 +97,11 @@ export class SettingsModal {
             </label>
             <select id="gemini-model-select" class="form-input">
               <option value="" ${!localStorage.getItem('kp_gemini_model_name') ? 'selected' : ''}>⚡ Otomatis (Deteksi Model Terbaik)</option>
-              <option value="gemini-1.5-flash-latest" ${localStorage.getItem('kp_gemini_model_name') === 'gemini-1.5-flash-latest' ? 'selected' : ''}>gemini-1.5-flash-latest (Cepat & Stabil)</option>
-              <option value="gemini-2.0-flash" ${localStorage.getItem('kp_gemini_model_name') === 'gemini-2.0-flash' ? 'selected' : ''}>gemini-2.0-flash (Generasi Terbaru)</option>
-              <option value="gemini-1.5-pro-latest" ${localStorage.getItem('kp_gemini_model_name') === 'gemini-1.5-pro-latest' ? 'selected' : ''}>gemini-1.5-pro-latest (Penalaran Mendalam)</option>
-              <option value="gemini-1.5-flash" ${localStorage.getItem('kp_gemini_model_name') === 'gemini-1.5-flash' ? 'selected' : ''}>gemini-1.5-flash</option>
+              <option value="gemini-3.6-flash" ${localStorage.getItem('kp_gemini_model_name') === 'gemini-3.6-flash' ? 'selected' : ''}>gemini-3.6-flash (Rekomendasi Utama)</option>
+              <option value="gemini-2.5-flash" ${localStorage.getItem('kp_gemini_model_name') === 'gemini-2.5-flash' ? 'selected' : ''}>gemini-2.5-flash</option>
+              <option value="gemini-2.0-flash" ${localStorage.getItem('kp_gemini_model_name') === 'gemini-2.0-flash' ? 'selected' : ''}>gemini-2.0-flash</option>
+              <option value="gemini-1.5-flash-latest" ${localStorage.getItem('kp_gemini_model_name') === 'gemini-1.5-flash-latest' ? 'selected' : ''}>gemini-1.5-flash-latest</option>
+              <option value="gemini-3.6-pro" ${localStorage.getItem('kp_gemini_model_name') === 'gemini-3.6-pro' ? 'selected' : ''}>gemini-3.6-pro (Penalaran Mendalam)</option>
             </select>
           </div>
 

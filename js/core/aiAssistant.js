@@ -386,12 +386,15 @@ Gaya Komunikasi:
         console.log('[Gemini API] Available models for key:', available);
 
         const candidates = [
-          'gemini-1.5-flash-latest',
+          'gemini-3.6-flash',
+          'gemini-3.0-flash',
+          'gemini-2.5-flash',
           'gemini-2.0-flash',
-          'gemini-2.0-flash-exp',
+          'gemini-1.5-flash-latest',
           'gemini-1.5-flash',
+          'gemini-3.6-pro',
+          'gemini-2.5-pro',
           'gemini-1.5-pro-latest',
-          'gemini-1.5-pro',
           'gemini-pro'
         ];
 
@@ -411,7 +414,7 @@ Gaya Komunikasi:
       console.warn('Gagal memuat list models dari Gemini API:', e);
     }
 
-    return 'gemini-1.5-flash-latest';
+    return 'gemini-3.6-flash';
   }
 
   /**
@@ -424,7 +427,7 @@ Gaya Komunikasi:
     }
 
     // Auto-detect best model
-    const modelName = await this.getBestModelName(apiKey);
+    let modelName = await this.getBestModelName(apiKey);
 
     // Add user message to history
     this.history.push({
@@ -432,7 +435,7 @@ Gaya Komunikasi:
       parts: [{ text: userText }]
     });
 
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+    let endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
 
     const requestBody = {
       systemInstruction: {
@@ -457,24 +460,47 @@ Gaya Komunikasi:
         body: JSON.stringify(requestBody)
       });
 
-      // If model not found (404), try fallback to gemini-1.5-flash-latest or gemini-2.0-flash
-      if (response.status === 404) {
-        console.warn(`Model ${modelName} not found (404), trying fallback models...`);
-        const fallbacks = ['gemini-1.5-flash-latest', 'gemini-2.0-flash', 'gemini-pro'];
-        for (const fb of fallbacks) {
-          if (fb === modelName) continue;
-          const fbEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${fb}:generateContent?key=${apiKey}`;
-          const fbRes = await fetch(fbEndpoint, {
+      // If model returned error, check for deprecation / suggestion or fallback
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const errMsg = errorData.error?.message || '';
+
+        // Check if error explicitly suggests another model (e.g. "Please update your code to use models/gemini-3.6-flash")
+        const suggestedMatch = errMsg.match(/models\/(gemini-[\w.-]+)/);
+        if (suggestedMatch && suggestedMatch[1] && suggestedMatch[1] !== modelName) {
+          const suggestedModel = suggestedMatch[1];
+          console.log(`[Gemini API] Auto-switching to suggested model: ${suggestedModel}`);
+          localStorage.setItem('kp_gemini_model_name', suggestedModel);
+          modelName = suggestedModel;
+          endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${suggestedModel}:generateContent?key=${apiKey}`;
+
+          response = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody)
           });
-          if (fbRes.ok) {
-            response = fbRes;
-            localStorage.setItem('kp_gemini_model_name', fb);
-            console.log(`Fallback succeeded with model: ${fb}`);
-            break;
+        } else if (response.status === 404 || response.status === 400) {
+          console.warn(`Model ${modelName} returned error (${response.status}), trying fallback models...`);
+          const fallbacks = ['gemini-3.6-flash', 'gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-pro'];
+          for (const fb of fallbacks) {
+            if (fb === modelName) continue;
+            const fbEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${fb}:generateContent?key=${apiKey}`;
+            const fbRes = await fetch(fbEndpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(requestBody)
+            });
+            if (fbRes.ok) {
+              response = fbRes;
+              localStorage.setItem('kp_gemini_model_name', fb);
+              console.log(`Fallback succeeded with model: ${fb}`);
+              break;
+            }
           }
+        }
+
+        if (!response.ok) {
+          throw new Error(errMsg || `HTTP ${response.status}: Gagal menghubungi Gemini API.`);
         }
       }
 
