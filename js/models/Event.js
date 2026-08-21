@@ -107,6 +107,8 @@ export class CalendarEvent {
       dayOfWeek: this.dayOfWeek,
       startTime: this.startTime,
       endTime: this.endTime,
+      startMinutes: this.startMinutes,
+      endMinutes: this.endMinutes,
       durationMinutes: this.durationMinutes,
       isDynamicPrayer: this.isDynamicPrayer,
       prayerAnchor: this.prayerAnchor,

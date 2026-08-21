@@ -142,11 +142,15 @@ export class CalendarView {
 
       // Render Event Cards
       dayEvents.forEach(evt => {
-        const topPx = this.calculateTopPx(evt.startMinutes);
-        const isCompact = evt.durationMinutes <= 25;
+        const startMins = (typeof evt.startMinutes === 'number' && !isNaN(evt.startMinutes))
+          ? evt.startMinutes
+          : timeToMinutes(evt.startTime);
+        const durationMins = evt.durationMinutes || (timeToMinutes(evt.endTime) - startMins) || 60;
+        const topPx = this.calculateTopPx(startMins);
+        const isCompact = durationMins <= 25;
         const heightPx = isCompact 
-          ? Math.max(26, (evt.durationMinutes / 60) * this.hourHeight - 1)
-          : Math.max(36, (evt.durationMinutes / 60) * this.hourHeight - 2);
+          ? Math.max(26, (durationMins / 60) * this.hourHeight - 1)
+          : Math.max(36, (durationMins / 60) * this.hourHeight - 2);
 
         const catObj = CATEGORIES[evt.category.toUpperCase()] || CATEGORIES.HABIT;
         const bgCol = evt.color || catObj.color;
@@ -333,8 +337,9 @@ export class CalendarView {
    * Helper: calculate top px relative to grid start hour
    */
   calculateTopPx(minutesFromMidnight) {
+    const mins = (typeof minutesFromMidnight === 'number' && !isNaN(minutesFromMidnight)) ? minutesFromMidnight : 0;
     const gridStartMinutes = this.startHour * 60;
-    const offsetMinutes = Math.max(0, minutesFromMidnight - gridStartMinutes);
+    const offsetMinutes = Math.max(0, mins - gridStartMinutes);
     return (offsetMinutes / 60) * this.hourHeight;
   }
 

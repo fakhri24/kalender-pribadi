@@ -10,6 +10,7 @@ import { CalendarView } from './ui/calendarView.js';
 import { LoggerModal } from './ui/loggerModal.js';
 import { EventEditorModal } from './ui/eventEditor.js';
 import { ReviewViewModal } from './ui/reviewView.js';
+import { CalendarEvent } from './models/Event.js';
 import { ExecutionLog } from './models/ExecutionLog.js';
 import { exportAllData, importDataFromFile } from './utils/exportImport.js';
 import {
@@ -119,8 +120,10 @@ class App {
     const endOfWeek = formatDate(getEndOfWeek(this.selectedDate));
     const allStoredEvents = await storage.getAll(STORES.EVENTS);
 
-    // Filter events belonging to current week
-    let weekEvents = allStoredEvents.filter(e => e.date >= startOfWeek && e.date <= endOfWeek);
+    // Filter events belonging to current week and deserialize as CalendarEvent instances
+    let weekEvents = allStoredEvents
+      .filter(e => e.date >= startOfWeek && e.date <= endOfWeek)
+      .map(e => (e instanceof CalendarEvent ? e : CalendarEvent.fromJSON(e)));
 
     // If no events found for this week, generate smart schedule
     if (weekEvents.length === 0) {
@@ -136,8 +139,8 @@ class App {
    */
   updateHeaderUI() {
     const weekDays = getWeekDays(this.selectedDate);
-    const startStr = `${weekDays[0].dayNumber} ${formatIndonesianDate(weekDays[0].date, false).split(' ')[1]}`;
-    const endStr = `${weekDays[6].dayNumber} ${formatIndonesianDate(weekDays[6].date, false)}`;
+    const startStr = formatIndonesianDate(weekDays[0].date, false).replace(` ${weekDays[0].date.getFullYear()}`, '');
+    const endStr = formatIndonesianDate(weekDays[6].date, false);
     const weekId = getWeekId(this.selectedDate);
 
     if (this.dom.currentWeekLabel) {
