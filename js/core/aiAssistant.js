@@ -9,11 +9,55 @@ import { calculatePrayerTimes } from './prayerEngine.js';
 import { CalendarEvent } from '../models/Event.js';
 import { formatDate, minutesToTime, timeToMinutes, getWeekId, getStartOfWeek, getEndOfWeek } from '../utils/dateUtils.js';
 
+function getWIBNow() {
+  const now = new Date();
+  
+  const shortTimeFormatter = new Intl.DateTimeFormat('id-ID', {
+    timeZone: 'Asia/Jakarta',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Jakarta',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: false
+  }).formatToParts(now);
+
+  const hour = parseInt(parts.find(p => p.type === 'hour').value, 10) % 24;
+  const minute = parseInt(parts.find(p => p.type === 'minute').value, 10);
+  const minutesFromMidnight = hour * 60 + minute;
+
+  const dayFormatter = new Intl.DateTimeFormat('id-ID', {
+    timeZone: 'Asia/Jakarta',
+    weekday: 'long'
+  });
+
+  const dateFormatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Jakarta',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+
+  return {
+    raw: now,
+    shortTimeString: shortTimeFormatter.format(now).replace(/\./g, ':'),
+    dayName: dayFormatter.format(now),
+    dateString: dateFormatter.format(now),
+    hour,
+    minute,
+    minutesFromMidnight
+  };
+}
+
 export class AIAssistant {
   constructor(appContext) {
     this.app = appContext; // Reference to main App instance
     this.history = [];     // Conversation history for multi-turn chat
-    this.modelName = 'gemini-1.5-flash';
+    this.modelName = 'gemini-3.5-flash-lite';
   }
 
   getApiKey() {
@@ -24,21 +68,17 @@ export class AIAssistant {
    * System Instruction defining the AI persona, real-time clock, and context
    */
   getSystemInstruction() {
-    const now = new Date();
-    const todayStr = formatDate(now);
-    const dayNames = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jum\'at', 'Sabtu'];
-    const currentDay = dayNames[now.getDay()];
-    const currentTimeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} WIB`;
+    const wib = getWIBNow();
 
     return `
 Anda adalah "Asisten Produktivitas Al-Bayan", AI Coach dan asisten pribadi untuk seorang guru & pembina di SMA Albayan Goalpara, Sukabumi.
 Lokasi: SMA Albayan Goalpara (Lat: -6.877°, Long: 106.965°, Elevasi: ~800m dpl, WIB UTC+7).
 
-WAKTU LOKAL SAAT INI (REAL-TIME CLOCK):
-- Hari: ${currentDay}
-- Tanggal: ${todayStr}
-- Pukul: ${currentTimeStr}
-(Gunakan waktu real-time ini untuk mengetahui kegiatan yang sedang berlangsung saat ini, kegiatan berikutnya yang paling dekat, sisa waktu jeda, dan waktu sholat terdekat).
+WAKTU LOKAL REAL-TIME SAAT INI (ZONA WAKTU INDONESIA BARAT / WIB):
+- Hari: ${wib.dayName}
+- Tanggal: ${wib.dateString}
+- Pukul / Jam Sekarang: ${wib.shortTimeString} WIB
+(SANGAT PENTING: Jam sekarang adalah ${wib.shortTimeString} WIB. Jangan gunakan waktu UTC atau waktu lampau. Seluruh perhitungan kegiatan yang sedang berlangsung, kegiatan berikutnya, dan sisa waktu WAJIB dihitung dari jam ${wib.shortTimeString} WIB ini!).
 
 Prinsip & Filosofi Jadwal:
 1. Dynamic Prayer Anchoring: 5 waktu sholat harian (Subuh, Dzuhur, Ashar, Maghrib, Isya) dihitung dinamis berdasarkan posisi matahari di Goalpara.
@@ -46,7 +86,7 @@ Prinsip & Filosofi Jadwal:
    - 80% Waktu Produktif (Mengajar, Mentoring, Kurikulum, Coding, Bayyinah, Qur'an, Tugas Imam/Adzan).
    - 10% Waktu Istirahat (Tidur konsisten 20.45 - 03.45 / 7 jam, Chess break, Me-time).
    - 10% Waktu Fleksibel (Makan, Mandi, Buffer mobilitas, Refleksi).
-3. Anda memiliki akses ke 'Tools' untuk membaca kalender, mengecek jadwal terdekat sekarang, menggeser/menambah/menghapus kegiatan, mencatat riil eksekusi (tepat waktu, telat, batal), dan mengevaluasi mingguan.
+3. Anda memiliki akses ke 'Tools' untuk membaca kalender, mengecek jadwal terdekat sekarang (get_current_and_upcoming_schedule), menggeser/menambah/menghapus kegiatan, mencatat riil eksekusi (tepat waktu, telat, batal), dan mengevaluasi mingguan.
 
 Gaya Komunikasi:
 - Ramah, disiplin, solutif, suportif, dan bernuansa Islami yang santun.
@@ -207,12 +247,12 @@ Gaya Komunikasi:
 
     switch (name) {
       case 'get_current_and_upcoming_schedule': {
-        const now = new Date();
-        const todayStr = formatDate(now);
-        const currentMinutes = now.getHours() * 60 + now.getMinutes();
-        const currentTimeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        const wib = getWIBNow();
+        const todayStr = wib.dateString;
+        const currentMinutes = wib.minutesFromMidnight;
+        const currentTimeStr = `${wib.shortTimeString} WIB`;
 
-        const prayerTimes = calculatePrayerTimes(now);
+        const prayerTimes = calculatePrayerTimes(wib.raw);
         const allStored = await storage.getAll(STORES.EVENTS);
         const todayEvents = allStored
           .filter(e => e.date === todayStr)
@@ -521,10 +561,13 @@ Gaya Komunikasi:
     // Auto-detect best model
     let modelName = await this.getBestModelName(apiKey);
 
+    const wib = getWIBNow();
+    const contextualizedPrompt = `[Waktu Nyata: ${wib.shortTimeString} WIB, Hari: ${wib.dayName}, Tanggal: ${wib.dateString}]\n${userText}`;
+
     // Add user message to history
     this.history.push({
       role: 'user',
-      parts: [{ text: userText }]
+      parts: [{ text: contextualizedPrompt }]
     });
 
     let endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
