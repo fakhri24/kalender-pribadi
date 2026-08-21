@@ -220,20 +220,24 @@ class FirebaseService {
   }
 
   /**
-   * Save multiple items in a batch
+   * Save multiple items in batched chunks (staying under Firestore 500-op limit)
    */
   async saveBulkDocs(subCollection, items) {
     if (!this.isSyncActive() || !items || items.length === 0) return items;
     try {
-      const batch = writeBatch(this.db);
-      items.forEach(item => {
-        const id = item.id || item.weekId || item.key;
-        if (id) {
-          const docRef = doc(this.db, 'users', this.currentUser.uid, subCollection, id);
-          batch.set(docRef, { ...item, updatedAt: new Date().toISOString() }, { merge: true });
-        }
-      });
-      await batch.commit();
+      const CHUNK_SIZE = 450;
+      for (let i = 0; i < items.length; i += CHUNK_SIZE) {
+        const chunk = items.slice(i, i + CHUNK_SIZE);
+        const batch = writeBatch(this.db);
+        chunk.forEach(item => {
+          const id = item.id || item.weekId || item.key;
+          if (id) {
+            const docRef = doc(this.db, 'users', this.currentUser.uid, subCollection, id);
+            batch.set(docRef, { ...item, updatedAt: new Date().toISOString() }, { merge: true });
+          }
+        });
+        await batch.commit();
+      }
       return items;
     } catch (err) {
       console.error(`Firestore saveBulkDocs error [${subCollection}]:`, err);
@@ -276,19 +280,23 @@ class FirebaseService {
   }
 
   /**
-   * Delete multiple documents in a batch
+   * Delete multiple documents in batched chunks
    */
   async deleteBulkDocs(subCollection, ids) {
     if (!this.isSyncActive() || !ids || ids.length === 0) return true;
     try {
-      const batch = writeBatch(this.db);
-      ids.forEach(id => {
-        if (id) {
-          const docRef = doc(this.db, 'users', this.currentUser.uid, subCollection, id);
-          batch.delete(docRef);
-        }
-      });
-      await batch.commit();
+      const CHUNK_SIZE = 450;
+      for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
+        const chunk = ids.slice(i, i + CHUNK_SIZE);
+        const batch = writeBatch(this.db);
+        chunk.forEach(id => {
+          if (id) {
+            const docRef = doc(this.db, 'users', this.currentUser.uid, subCollection, id);
+            batch.delete(docRef);
+          }
+        });
+        await batch.commit();
+      }
       return true;
     } catch (err) {
       console.error(`Firestore deleteBulkDocs error [${subCollection}]:`, err);
