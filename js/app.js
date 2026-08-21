@@ -255,6 +255,10 @@ class App {
 
   async handleApplyNextWeek(selectedDate) {
     const nextWeekDate = addDays(selectedDate, 7);
+    const startOfWeek = formatDate(getStartOfWeek(nextWeekDate));
+    const endOfWeek = formatDate(getEndOfWeek(nextWeekDate));
+
+    await storage.deleteEventsInRange(startOfWeek, endOfWeek);
     const newEvents = scheduler.generateWeeklySchedule(nextWeekDate);
     await storage.putBulk(STORES.EVENTS, newEvents.map(e => e.toJSON ? e.toJSON() : e));
     this.selectedDate = nextWeekDate;
@@ -293,12 +297,21 @@ class App {
       await this.refreshUI();
     });
 
-    // Auto-Generate Smart Schedule
+    // Auto-Generate / Reset Smart Schedule to Default
     this.dom.autoGenBtn?.addEventListener('click', async () => {
-      if (confirm('Jadwal minggu ini akan di-generate ulang sesuai rekomendasi rasio 80:10:10 dan waktu sholat Goalpara. Lanjutkan?')) {
+      if (confirm('Jadwal minggu ini akan di-reset dan di-generate ulang sesuai template master default (Al-Bayan Goalpara) & rasio 80:10:10. Lanjutkan?')) {
+        const startOfWeek = formatDate(getStartOfWeek(this.selectedDate));
+        const endOfWeek = formatDate(getEndOfWeek(this.selectedDate));
+
+        // Clean old events for this week first to prevent duplication
+        await storage.deleteEventsInRange(startOfWeek, endOfWeek);
+
+        // Generate clean master schedule
         const generated = scheduler.generateWeeklySchedule(this.selectedDate);
         await storage.putBulk(STORES.EVENTS, generated.map(e => e.toJSON ? e.toJSON() : e));
+
         await this.refreshUI();
+        alert('Jadwal minggu ini berhasil dikembalikan ke template master default!');
       }
     });
 

@@ -203,6 +203,19 @@ class StorageEngine {
   }
 
   /**
+   * Delete events in a specific date range (inclusive)
+   */
+  async deleteEventsInRange(startDate, endDate) {
+    const allEvents = await this.getAll(STORES.EVENTS);
+    const toDelete = allEvents.filter(e => e.date >= startDate && e.date <= endDate);
+    
+    for (const evt of toDelete) {
+      await this.delete(STORES.EVENTS, evt.id);
+    }
+    return toDelete.length;
+  }
+
+  /**
    * Clear an entire store
    */
   async clear(storeName) {

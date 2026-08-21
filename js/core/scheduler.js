@@ -61,6 +61,7 @@ export class SchedulerEngine {
 
     dayTemplates.forEach(tpl => {
       const evt = new CalendarEvent({
+        id: `evt_${dateStr}_${tpl.templateId}`,
         templateId: tpl.templateId,
         title: tpl.title,
         category: tpl.category,
