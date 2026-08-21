@@ -3,6 +3,8 @@
  * Offline-First & Zero-Backend Storage Engine
  */
 
+import { firebaseService } from './firebase.js';
+
 const DB_NAME = 'KalenderPribadiDB';
 const DB_VERSION = 1;
 const STORES = {
@@ -69,13 +71,14 @@ class StorageEngine {
   }
 
   /**
-   * Save item to store
+   * Save item to store (Local + Cloud Firestore if active)
    */
   async put(storeName, data) {
+    // 1. Local Persistence (IndexedDB / localStorage)
     try {
       const db = await this.initDB();
       if (db) {
-        return new Promise((resolve, reject) => {
+        await new Promise((resolve, reject) => {
           const tx = db.transaction(storeName, 'readwrite');
           const store = tx.objectStore(storeName);
           const req = store.put(data);
@@ -85,22 +88,34 @@ class StorageEngine {
       }
     } catch (e) {
       console.warn('IndexedDB put error, using localStorage', e);
+      const key = `kp_${storeName}_${data.id || data.weekId || data.key}`;
+      localStorage.setItem(key, JSON.stringify(data));
     }
 
-    // LocalStorage Fallback
-    const key = `kp_${storeName}_${data.id || data.weekId || data.key}`;
-    localStorage.setItem(key, JSON.stringify(data));
+    // 2. Background Cloud Sync (Firestore)
+    if (firebaseService.isSyncActive()) {
+      const docId = data.id || data.weekId || data.key;
+      if (docId) {
+        firebaseService.saveDoc(storeName, docId, data).catch(err => {
+          console.warn('Cloud sync error in put:', err);
+        });
+      }
+    }
+
     return data;
   }
 
   /**
-   * Put multiple items in batch
+   * Put multiple items in batch (Local + Cloud Firestore if active)
    */
   async putBulk(storeName, items) {
+    if (!items || items.length === 0) return items;
+
+    // 1. Local Persistence
     try {
       const db = await this.initDB();
       if (db) {
-        return new Promise((resolve, reject) => {
+        await new Promise((resolve, reject) => {
           const tx = db.transaction(storeName, 'readwrite');
           const store = tx.objectStore(storeName);
           items.forEach(item => store.put(item));
@@ -110,13 +125,19 @@ class StorageEngine {
       }
     } catch (e) {
       console.warn('IndexedDB bulk error', e);
+      items.forEach(item => {
+        const key = `kp_${storeName}_${item.id || item.weekId || item.key}`;
+        localStorage.setItem(key, JSON.stringify(item));
+      });
     }
 
-    // LocalStorage Fallback
-    items.forEach(item => {
-      const key = `kp_${storeName}_${item.id || item.weekId || item.key}`;
-      localStorage.setItem(key, JSON.stringify(item));
-    });
+    // 2. Background Cloud Sync
+    if (firebaseService.isSyncActive()) {
+      firebaseService.saveBulkDocs(storeName, items).catch(err => {
+        console.warn('Cloud sync error in putBulk:', err);
+      });
+    }
+
     return items;
   }
 
@@ -186,7 +207,7 @@ class StorageEngine {
     try {
       const db = await this.initDB();
       if (db) {
-        return new Promise((resolve, reject) => {
+        await new Promise((resolve, reject) => {
           const tx = db.transaction(storeName, 'readwrite');
           const store = tx.objectStore(storeName);
           const req = store.delete(key);
@@ -199,6 +220,13 @@ class StorageEngine {
     }
 
     localStorage.removeItem(`kp_${storeName}_${key}`);
+
+    if (firebaseService.isSyncActive()) {
+      firebaseService.deleteDoc(storeName, key).catch(err => {
+        console.warn('Cloud delete error:', err);
+      });
+    }
+
     return true;
   }
 
@@ -213,6 +241,32 @@ class StorageEngine {
       await this.delete(STORES.EVENTS, evt.id);
     }
     return toDelete.length;
+  }
+
+  /**
+   * Pull all records from Cloud Firestore into local storage
+   */
+  async pullAllFromCloud() {
+    if (!firebaseService.isSyncActive()) return false;
+
+    try {
+      const cloudEvents = await firebaseService.getDocs(STORES.EVENTS);
+      const cloudLogs = await firebaseService.getDocs(STORES.LOGS);
+      const cloudReviews = await firebaseService.getDocs(STORES.REVIEWS);
+
+      if (cloudEvents.length > 0) await this.putBulk(STORES.EVENTS, cloudEvents);
+      if (cloudLogs.length > 0) await this.putBulk(STORES.LOGS, cloudLogs);
+      if (cloudReviews.length > 0) await this.putBulk(STORES.REVIEWS, cloudReviews);
+
+      return {
+        eventsCount: cloudEvents.length,
+        logsCount: cloudLogs.length,
+        reviewsCount: cloudReviews.length
+      };
+    } catch (err) {
+      console.error('Gagal menarik data dari cloud:', err);
+      return false;
+    }
   }
 
   /**

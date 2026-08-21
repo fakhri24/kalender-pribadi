@@ -10,6 +10,8 @@ import { CalendarView } from './ui/calendarView.js';
 import { LoggerModal } from './ui/loggerModal.js';
 import { EventEditorModal } from './ui/eventEditor.js';
 import { ReviewViewModal } from './ui/reviewView.js';
+import { SettingsModal } from './ui/settingsModal.js';
+import { firebaseService } from './core/firebase.js';
 import { CalendarEvent } from './models/Event.js';
 import { ExecutionLog } from './models/ExecutionLog.js';
 import { exportAllData, importDataFromFile } from './utils/exportImport.js';
@@ -34,6 +36,7 @@ class App {
     this.initComponents();
     this.initTheme();
     this.bindGlobalEvents();
+    this.initFirebaseListener();
   }
 
   initDOM() {
@@ -46,6 +49,8 @@ class App {
       autoGenBtn: document.getElementById('auto-gen-btn'),
       addEventBtn: document.getElementById('add-event-btn'),
       reviewBtn: document.getElementById('weekly-review-btn'),
+      settingsBtn: document.getElementById('settings-btn'),
+      cloudSyncStatus: document.getElementById('cloud-sync-status'),
       exportBtn: document.getElementById('export-btn'),
       importBtn: document.getElementById('import-btn'),
       importFileInput: document.getElementById('import-file-input'),
@@ -58,7 +63,8 @@ class App {
       calendarContainer: document.getElementById('calendar-view-container'),
       loggerModalEl: document.getElementById('logger-modal'),
       editorModalEl: document.getElementById('editor-modal'),
-      reviewModalEl: document.getElementById('review-modal')
+      reviewModalEl: document.getElementById('review-modal'),
+      settingsModalEl: document.getElementById('settings-modal')
     };
   }
 
@@ -87,6 +93,11 @@ class App {
       this.dom.reviewModalEl,
       (reviewData) => this.handleSaveReview(reviewData),
       (selectedDate) => this.handleApplyNextWeek(selectedDate)
+    );
+
+    this.settingsModal = new SettingsModal(
+      this.dom.settingsModalEl,
+      () => this.handleCloudStateChange()
     );
   }
 
@@ -368,6 +379,15 @@ class App {
       await exportAllData();
     });
 
+    // Settings Modal (Cloud & AI)
+    this.dom.settingsBtn?.addEventListener('click', () => {
+      this.settingsModal.open();
+    });
+
+    this.dom.cloudSyncStatus?.addEventListener('click', () => {
+      this.settingsModal.open();
+    });
+
     // Import Data JSON
     this.dom.importBtn?.addEventListener('click', () => {
       this.dom.importFileInput?.click();
@@ -385,6 +405,40 @@ class App {
         }
       }
     });
+  }
+
+  /**
+   * Listen for Firebase Authentication changes
+   */
+  initFirebaseListener() {
+    firebaseService.onAuthChange(async (user) => {
+      this.updateCloudSyncStatus(user);
+      if (user) {
+        // Auto-pull from cloud on login
+        await storage.pullAllFromCloud();
+        await this.refreshUI();
+      }
+    });
+  }
+
+  updateCloudSyncStatus(user) {
+    if (!this.dom.cloudSyncStatus) return;
+
+    if (user) {
+      const name = user.displayName ? user.displayName.split(' ')[0] : 'User';
+      this.dom.cloudSyncStatus.innerHTML = `☁️ Cloud Sync (<strong>${name}</strong>)`;
+      this.dom.cloudSyncStatus.style.color = '#10B981';
+      this.dom.cloudSyncStatus.title = `Tersinkronisasi ke Firestore sebagai ${user.email} (Klik untuk Pengaturan)`;
+    } else {
+      this.dom.cloudSyncStatus.innerHTML = `💾 Mode Lokal`;
+      this.dom.cloudSyncStatus.style.color = 'var(--accent-primary)';
+      this.dom.cloudSyncStatus.title = `Klik untuk mengaktifkan Cloud Sync (Multi-Device)`;
+    }
+  }
+
+  async handleCloudStateChange() {
+    this.updateCloudSyncStatus(firebaseService.currentUser);
+    await this.refreshUI();
   }
 }
 

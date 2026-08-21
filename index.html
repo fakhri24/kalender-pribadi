@@ -27,12 +27,15 @@
             <div class="location-tag">
               <span>📍 SMA Albayan Goalpara, Sukabumi</span>
               <span>•</span>
-              <span id="prayer-sync-status">Waktu Sholat Aktif</span>
+              <span id="cloud-sync-status" style="font-weight: 600; color: var(--accent-primary); cursor: pointer;" title="Klik untuk membuka pengaturan Cloud Sync">💾 Mode Lokal</span>
             </div>
           </div>
         </div>
 
         <div class="header-actions">
+          <button class="btn btn-outline btn-sm" id="settings-btn" title="Pengaturan Cloud Firestore & Gemini AI">
+            ⚙️ Cloud & AI
+          </button>
           <button class="btn btn-outline btn-sm" id="export-btn" title="Download backup JSON">
             💾 Backup JSON
           </button>
@@ -129,6 +132,7 @@
   <div class="modal-overlay" id="logger-modal"></div>
   <div class="modal-overlay" id="editor-modal"></div>
   <div class="modal-overlay" id="review-modal"></div>
+  <div class="modal-overlay" id="settings-modal"></div>
 
   <!-- App Entrypoint Script -->
   <script type="module" src="js/app.js"></script>
