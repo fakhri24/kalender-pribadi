@@ -7,8 +7,13 @@ Dokumen ini berisi panduan arsitektur, prinsip desain, konvensi kode, dan standa
 ## 1. Project Overview & Core Philosophy
 
 Aplikasi ini adalah **Kalender Produktivitas Pribadi Berbasis Web (Offline-First & Multi-Device Cloud Sync)** yang dirancang untuk:
-1. **Dynamic Prayer-Time Anchoring**: Sinkronisasi jadwal otomatis terhadap 5 waktu sholat harian berdasarkan koordinat astronomi matahari (SMA Albayan Goalpara, Sukabumi).
-2. **Hybrid Scheduling**: Menggabungkan *Fixed Anchors* (mengajar, tidur, makan, kelas malam) dengan *Floating Habits* (Qur'an, Bayyinah, Coding, Chess, Kurikulum, dll.) berdasarkan target rasio waktu:
+1. **Dynamic Prayer-Time Anchoring**: Sinkronisasi jadwal otomatis terhadap 5 waktu sholat harian berdasarkan koordinat astronomi matahari (SMA Albayan Goalpara, Sukabumi):
+   - **Aturan Khusus Ashar**: Senin–Jum'at adzan Ashar tepat pukul **15:40 WIB** (ba'da KBM selesai), Sabtu–Ahad mengikuti astronomis normal.
+   - **Standarisasi Maghrib**: Durasi sholat & dzikir petang disetarakan dengan Subuh (**30 menit**).
+   - **Tugas Khusus Masjid**:
+     - *Tugas Imam* (Subuh 30m, Maghrib 30m, Isya 25m): Mulai tepat adzan dengan durasi sholat berjamaah & dzikir.
+     - *Tugas Muadzin* (Ashar Sabtu 30m, Maghrib Ahad 35m): Mulai Adzan - 5 menit mencakup persiapan/adzan dan sholat berjamaah.
+2. **Hybrid Scheduling**: Menggabungkan *Fixed Anchors* (mengajar MTU/PM, KBM Tahfidz, Privat Matematika, tidur, makan, kelas malam) dengan *Floating Habits* (Qur'an, Bayyinah, Coding, Chess, Kurikulum, dll.) berdasarkan target rasio waktu:
    - **80% Waktu Produktif**
    - **10% Waktu Istirahat (Rest)**
    - **10% Waktu Fleksibel (Buffer, mobilitas, refleksi)**
@@ -30,8 +35,8 @@ Aplikasi ini adalah **Kalender Produktivitas Pribadi Berbasis Web (Offline-First
   - **Cross-Device Instant Setup**: Enkripsi payload konfigurasi URL `#setup=...` untuk kemudahan sinkronisasi laptop ke HP tanpa ketik manual.
   - Full **Export/Import JSON** untuk backup, migrasi offline, dan arsip riwayat mingguan.
 - **Cache-Buster & Version Management Engine**:
-  - **Auto-Version Checker**: Deteksi otomatis rilis baru dari `version.json` dengan notifikasi *update toast*.
-  - **Query-String Versioning**: Tag aset CSS & JS dinamis (`?v=1.0.4`) untuk memotong cache usang browser.
+  - **Single Source of Truth (`version.json`)**: Deteksi update otomatis membaca `version.json` langsung dari server tanpa duplikasi string hardcode di file JS (`getAppVersion()`).
+  - **Query-String Versioning**: Tag aset CSS & JS dinamis (`?v=1.0.9`) untuk memotong cache usang browser.
   - **One-Click Cache Purge**: Pembersihan `CacheStorage` dan *force reload* instan dari UI Pengaturan.
 - **AI Intelligence & Tool Calling Engine**:
   - **Google Gemini API (v1beta)**: Model default `gemini-3.5-flash-lite` (kuota 500 RPD), `gemini-3.1-flash-lite`, dan `gemini-3.6-flash`.
@@ -99,4 +104,4 @@ kalender-pribadi/
 3. **Deterministic Event IDs**: Seluruh event hasil auto-generate wajib menggunakan ID deterministik (`evt_YYYY-MM-DD_templateId` / `flt_YYYY-MM-DD_habitId`) untuk mencegah duplikasi data pada sinkronisasi.
 4. **Time & Precision**: Semua manipulasi waktu internal menggunakan format menit sejak tengah malam (*minutes from midnight: 0–1439*) dan dikonversi dengan zona waktu WIB (*Asia/Jakarta*).
 5. **Mobile & Desktop Responsive**: Kalender nyaman dilihat di smartphone (tampilan Harian / Agenda / Chat Drawer full) maupun di laptop/desktop (Time Grid 7 Kolom).
-6. **Zero-Stale-Cache Guarantee**: Setiap rilis baru wajib menaikkan versi pada `version.json` dan `index.html` agar seluruh klien otomatis me-refresh kode terbaru.
+6. **Zero-Stale-Cache Guarantee**: Setiap rilis baru wajib menaikkan versi pada `version.json` dan query string aset di `index.html`. Engine `versionChecker.js` menggunakan `version.json` sebagai *Single Source of Truth* tanpa duplikasi hardcode di JS.

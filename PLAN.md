@@ -10,13 +10,16 @@ Dokumen ini memuat spesifikasi jadwal terperinci, model data, algoritma penjadwa
 - **Lokasi**: SMA Albayan Goalpara, Desa Sukamekar, Kec. Sukaraja, Kab. Sukabumi
 - **Koordinat**: `Latitude: -6.877°`, `Longitude: 106.965°`, `Timezone: Asia/Jakarta (UTC+7, WIB)`
 - **Metode**: Kemenag RI (Subuh 20°, Isya 18°, Ihtiyat 2 menit)
+- **Aturan Khusus Waktu Sholat Al-Bayan**:
+  - **Ashar (Senin–Jum'at)**: Adzan dikunci tepat pukul **15:40 WIB** (ba'da KBM selesai), sholat 15:40 – 16:05 (25m). Sabtu & Ahad mengikuti astronomis matahari (~15:18 WIB).
+  - **Maghrib**: Durasi sholat & dzikir petang disetarakan dengan Subuh (**30 menit**).
 - **Tugas Khusus Masjid**:
-  - **Imam Subuh**: Senin & Kamis (Mulai = Waktu Adzan Subuh + 15 menit, durasi 30 menit)
-  - **Imam Maghrib**: Selasa (Mulai = Waktu Adzan Maghrib + 15 menit, durasi 30 menit)
-  - **Imam Isya**: Ahad (Mulai = Waktu Adzan Isya + 5 menit, durasi 15 menit)
-  - **Muadzin Maghrib**: Ahad (Mulai = Waktu Adzan Maghrib - 5 menit, durasi 10 menit)
-  - **Muadzin Ashar**: Sabtu (Mulai = Waktu Adzan Ashar - 5 menit, durasi 10 menit)
-  - **Sholat 5 Waktu Harian**: Slot otomatis sholat berjamaah & dzikir/rawatib (~20-25 menit tiap waktu).
+  - **Imam Subuh**: Senin & Kamis (Mulai = Adzan Subuh, durasi 30 menit)
+  - **Imam Maghrib**: Selasa (Mulai = Adzan Maghrib, durasi 30 menit)
+  - **Imam Isya**: Ahad (Mulai = Adzan Isya, durasi 25 menit)
+  - **Muadzin Ashar**: Sabtu (Mulai = Adzan Ashar - 5 menit, total durasi 30 menit)
+  - **Muadzin Maghrib**: Ahad (Mulai = Adzan Maghrib - 5 menit, total durasi 35 menit)
+  - **Sholat 5 Waktu Harian**: Slot otomatis sholat berjamaah & dzikir/rawatib.
 
 ---
 
@@ -29,17 +32,14 @@ Dokumen ini memuat spesifikasi jadwal terperinci, model data, algoritma penjadwa
   - Siang: **13.00 – 13.20** (Kecuali Jum'at: **12.25 – 12.45**)
   - Sore: **17.30 – 17.50**
 - **Champion Squad (7x5x10 menit)**:
-  - **Senin**: 06.20, 10.20 (ba'da X-1), 12.30 (ba'da Dzuhur), 15.00, 18.25 (ba'da Maghrib)
-  - **Selasa & Rabu**: 06.20, 09.00, 12.30, 15.00, 18.25
-  - **Kamis**: 06.20, 09.40 (ba'da X-3), 12.30, 15.00, 18.25
-  - **Jum'at**: 06.20, 09.00, 13.25 (ba'da Mentoring 2), 15.00, 18.25
-  - **Sabtu**: 06.20, 09.40 (ba'da X-1), 12.30, 15.00, 18.25
-  - **Ahad**: 06.50 (ba'da sarapan), 09.00, 12.30, 15.00, 18.25
+  - **Senin, Kamis, Sabtu, Ahad, Rabu**: 06.20, CS 2 (pagi/ba'da KBM), 12.30 (ba'da Dzuhur), 15.00, 18.30 (ba'da Maghrib)
+  - **Selasa & Jum'at**: CS 5 diatur pukul 19.30 (ba'da Isya karena ba'da Maghrib adalah KBM Tahfidz)
 
 ---
 
 ### C. Jadwal Mengajar, Kelas & Mentoring (Fixed Academic/Club Slots)
 - **Senin**:
+  - 05.10 – 05.40: KBM Tahfidz XI.MIPA-2 (30m, Ba'da Subuh)
   - 07.40 – 09.00: X-3 MTU (80m)
   - 09.00 – 10.20: X-1 MTU (80m)
   - 10.40 – 12.00: X-2 MTU (80m)
@@ -48,7 +48,10 @@ Dokumen ini memuat spesifikasi jadwal terperinci, model data, algoritma penjadwa
   - 20.00 – 20.45: Additional Night Class (45m)
 - **Selasa**:
   - 16.15 – 17.15: Math Olympiad (60m)
+  - 18.29 – 19.05: KBM Tahfidz XI.MIPA-2 (Ba'da Maghrib s.d. Isya)
+  - 19.45 – 20.45: Privat Matematika (Salma & Ghina) (60m)
 - **Rabu**:
+  - 05.09 – 05.39: KBM Tahfidz XI.MIPA-2 (30m, Ba'da Subuh)
   - 16.15 – 17.15: Additional Evening Class (60m)
   - 19.45 – 20.45: Takhosus Tahfidz (60m)
 - **Kamis**:
@@ -61,10 +64,11 @@ Dokumen ini memuat spesifikasi jadwal terperinci, model data, algoritma penjadwa
   - 10.40 – 11.20: X-1 PM (40m)
   - 11.20 – 12.00: Mentoring Sesi 1 (40m)
   - 12.00 – 12.25: 🕌 Sholat Jum'at Berjamaah (25m)
-  - 12.25 – 12.45: Makan Siang (20m, dinamis jika Jum'at molor tetapi selesai tetap 12.45)
+  - 12.25 – 12.45: Makan Siang (20m)
   - 12.45 – 13.25: Mentoring Sesi 2 (40m)
   - 13.25 – 13.35: Champion Squad 3 (Ba'da Mentoring 2) (10m)
   - 16.15 – 17.15: Matriculation Numeration Class (60m)
+  - 18.28 – 19.04: KBM Tahfidz XI.MIPA-2 (Ba'da Maghrib s.d. Isya)
   - 20.00 – 20.45: Additional Night Class (45m)
 - **Sabtu**:
   - 07.00 – 07.40: X-3 MTU (40m)
@@ -176,5 +180,15 @@ Target alokasi mingguan untuk slot fleksibel/mandiri (Rasio 80:10:10):
 - [x] **Mobile Google Auth Resilience**: Integrasi fallback otomatis `signInWithPopup` -> `signInWithRedirect` dan pemrosesan `getRedirectResult` untuk mengatasi pemblokiran popup di browser HP (iOS Safari, Android Chrome, WebView).
 - [x] **Instant Mobile Setup Sharing**: Fitur `📲 Salin Link Setup untuk HP` yang mengenkripsi konfigurasi Firebase & API key ke dalam URL hash (`#setup=...`) untuk setup instan tanpa input manual di HP.
 - [x] **Auto-Version Checker**: Pemantauan rilis baru via `version.json` dengan notifikasi toast *update banner* otomatis saat tab aktif.
-- [x] **Cache-Busting Architecture**: Implementasi query string versioning (`?v=1.0.4`), anti-cache meta tags, dan konfigurasi `firebase.json` headers.
+- [x] **Cache-Busting Architecture**: Implementasi query string versioning (`?v=1.0.9`), anti-cache meta tags, dan konfigurasi `firebase.json` headers.
 - [x] **One-Click Cache Purge**: Tombol *🔄 Bersihkan Cache & Update* di menu pengaturan untuk menghapus `CacheStorage` dan memuat ulang kode terkini.
+
+### Phase 9: Special Operational Rules, Academic Slot Additions & Single-Source Versioning `[DONE]`
+- [x] **Aturan Khusus Ashar Al-Bayan**: Penguncian adzan Ashar pukul 15:40 WIB khusus Senin–Jum'at (selesai KBM) dan astronomis di akhir pekan.
+- [x] **Standarisasi Maghrib & Tugas Masjid**: Durasi Maghrib 30 menit (sholat & dzikir petang), Imam Subuh/Maghrib 30m, Muadzin 30m/35m (Adzan - 5m).
+- [x] **Penambahan Slot Akademik Master**:
+  - *Privat Matematika (Salma & Ghina)*: Selasa 19:45 – 20:45 (60m).
+  - *KBM Tahfidz XI.MIPA-2 (Subuh)*: Senin & Rabu ba'da Subuh (30m).
+  - *KBM Tahfidz XI.MIPA-2 (Maghrib)*: Selasa & Jum'at ba'da Maghrib s.d. Isya dengan dukungan kalkulasi dinamis `endPrayer: 'isha'`.
+- [x] **Refaktor Single Source of Truth Versioning**: `version.json` sebagai sumber kebenaran tunggal versi aplikasi tanpa duplikasi string manual di JS untuk mencegah banner looping.
+
