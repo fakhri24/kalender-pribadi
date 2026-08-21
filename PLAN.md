@@ -11,6 +11,7 @@ Dokumen ini memuat spesifikasi jadwal terperinci, model data, algoritma penjadwa
 - **Koordinat**: `Latitude: -6.877°`, `Longitude: 106.965°`, `Timezone: Asia/Jakarta (UTC+7, WIB)`
 - **Metode**: Kemenag RI (Subuh 20°, Isya 18°, Ihtiyat 2 menit)
 - **Aturan Khusus Waktu Sholat Al-Bayan**:
+  - **Dzuhur (Senin–Sabtu)**: Adzan dikunci minimal pukul **12:00 WIB** (ba'da KBM selesai). Jika waktu astronomis lebih dari 12:00 maka mengikuti astronomis aslinya. Hari Ahad mengikuti astronomis murni.
   - **Ashar (Senin–Jum'at)**: Adzan dikunci tepat pukul **15:40 WIB** (ba'da KBM selesai), sholat 15:40 – 16:05 (25m). Sabtu & Ahad mengikuti astronomis matahari (~15:18 WIB).
   - **Maghrib**: Durasi sholat & dzikir petang disetarakan dengan Subuh (**30 menit**).
 - **Tugas Khusus Masjid**:
@@ -199,7 +200,7 @@ Target alokasi mingguan untuk slot fleksibel/mandiri (Rasio 80:10:10):
 - [x] **One-Click Cache Purge**: Tombol *🔄 Bersihkan Cache & Update* di menu pengaturan untuk menghapus `CacheStorage` dan memuat ulang kode terkini.
 
 ### Phase 9: Special Operational Rules, Academic Slot Additions & Single-Source Versioning `[DONE]`
-- [x] **Aturan Khusus Ashar Al-Bayan**: Penguncian adzan Ashar pukul 15:40 WIB khusus Senin–Jum'at (selesai KBM) dan astronomis di akhir pekan.
+- [x] **Aturan Khusus Dzuhur & Ashar Al-Bayan**: Penguncian adzan Dzuhur minimal 12:00 WIB (Senin–Sabtu selesai KBM) dan adzan Ashar 15:40 WIB (Senin–Jum'at selesai KBM).
 - [x] **Standarisasi Maghrib & Tugas Masjid**: Durasi Maghrib 30 menit (sholat & dzikir petang), Imam Subuh/Maghrib 30m, Muadzin 30m/35m (Adzan - 5m).
 - [x] **Penambahan Slot Akademik & Rutinitas Master**:
   - *Piket Subuh*: Selasa & Sabtu ba'da Subuh (30m).

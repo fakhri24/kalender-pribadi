@@ -1,5 +1,5 @@
 {
-  "version": "1.0.11",
-  "releasedAt": "2026-08-21T15:17:30+07:00",
-  "changeNotes": "Penyesuaian jadwal sarapan pagi (05:40 ba'da KBM/Piket Subuh) dan rutinitas Shaum Sunnah Kamis (Sahur, Al-Ma'tsurat, Takjil, & Buka Shaum ba'da Maghrib)"
+  "version": "1.0.12",
+  "releasedAt": "2026-08-21T15:23:30+07:00",
+  "changeNotes": "Implementasi aturan khusus adzan Dzuhur Al-Bayan (Senin–Sabtu minimal 12:00 ba'da KBM selesai, Ahad astronomis)"
 }

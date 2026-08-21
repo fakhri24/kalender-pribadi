@@ -8,6 +8,7 @@ Dokumen ini berisi panduan arsitektur, prinsip desain, konvensi kode, dan standa
 
 Aplikasi ini adalah **Kalender Produktivitas Pribadi Berbasis Web (Offline-First & Multi-Device Cloud Sync)** yang dirancang untuk:
 1. **Dynamic Prayer-Time Anchoring**: Sinkronisasi jadwal otomatis terhadap 5 waktu sholat harian berdasarkan koordinat astronomi matahari (SMA Albayan Goalpara, Sukabumi):
+   - **Aturan Khusus Dzuhur**: Senin–Sabtu adzan Dzuhur dikunci minimal pukul **12:00 WIB** (ba'da KBM selesai). Jika astronomis > 12:00 maka mengikuti astronomis. Ahad mengikuti astronomis murni.
    - **Aturan Khusus Ashar**: Senin–Jum'at adzan Ashar tepat pukul **15:40 WIB** (ba'da KBM selesai), Sabtu–Ahad mengikuti astronomis normal.
    - **Standarisasi Maghrib**: Durasi sholat & dzikir petang disetarakan dengan Subuh (**30 menit**).
    - **Tugas Khusus Masjid**:
@@ -36,7 +37,7 @@ Aplikasi ini adalah **Kalender Produktivitas Pribadi Berbasis Web (Offline-First
   - Full **Export/Import JSON** untuk backup, migrasi offline, dan arsip riwayat mingguan.
 - **Cache-Buster & Version Management Engine**:
   - **Single Source of Truth (`version.json`)**: Deteksi update otomatis membaca `version.json` langsung dari server tanpa duplikasi string hardcode di file JS (`getAppVersion()`).
-  - **Query-String Versioning**: Tag aset CSS & JS dinamis (`?v=1.0.11`) untuk memotong cache usang browser.
+  - **Query-String Versioning**: Tag aset CSS & JS dinamis (`?v=1.0.12`) untuk memotong cache usang browser.
   - **One-Click Cache Purge**: Pembersihan `CacheStorage` dan *force reload* instan dari UI Pengaturan.
 - **AI Intelligence & Tool Calling Engine**:
   - **Google Gemini API (v1beta)**: Model default `gemini-3.5-flash-lite` (kuota 500 RPD), `gemini-3.1-flash-lite`, dan `gemini-3.6-flash`.
