@@ -1,6 +1,6 @@
 # PLAN.md - Rencana Implementasi & Spesifikasi Kalender Pribadi
 
-Dokumen ini memuat spesifikasi jadwal terperinci, model data, algoritma penjadwalan dinamis, serta tahapan implementasi aplikasi kalender pribadi.
+Dokumen ini memuat spesifikasi jadwal terperinci, model data, algoritma penjadwalan dinamis, integrasi Cloud Firestore, serta arsitektur Asisten AI Copilot.
 
 ---
 
@@ -8,7 +8,7 @@ Dokumen ini memuat spesifikasi jadwal terperinci, model data, algoritma penjadwa
 
 ### A. Lokasi & Waktu Sholat (Dynamic Anchors)
 - **Lokasi**: SMA Albayan Goalpara, Desa Sukamekar, Kec. Sukaraja, Kab. Sukabumi
-- **Koordinat**: `Latitude: -6.877°`, `Longitude: 106.965°`, `Timezone: Asia/Jakarta (UTC+7)`
+- **Koordinat**: `Latitude: -6.877°`, `Longitude: 106.965°`, `Timezone: Asia/Jakarta (UTC+7, WIB)`
 - **Metode**: Kemenag RI (Subuh 20°, Isya 18°, Ihtiyat 2 menit)
 - **Tugas Khusus Masjid**:
   - **Imam Subuh**: Senin & Kamis (Mulai = Waktu Adzan Subuh + 15 menit, durasi 30 menit)
@@ -22,19 +22,19 @@ Dokumen ini memuat spesifikasi jadwal terperinci, model data, algoritma penjadwa
 
 ### B. Rutinitas Tetap (Fixed Daily Anchors)
 - **Tidur (Sleep)**: **20.45 – 03.45** (Konsisten 7 jam setiap hari).
-- **Bangun & Mandi Pagi**: **03.45 – 04.10** (Mandi 04.00, 10 menit).
-- **Mandi Sore**: **17.15 – 17.25** (10 menit).
+- **Bangun & Mandi Pagi**: **03.45 – 04.15** (Mandi 04.00, 15 menit).
+- **Mandi Sore**: **17.15 – 17.30** (15 menit).
 - **Makan (Eating)**: 3x sehari masing-masing 20 menit:
-  - Pagi: **06.00 – 06.20**
-  - Siang: **13.00 – 13.20**
+  - Pagi: **06.00 – 06.20** (Kecuali Ahad ba'da Takhosus: **06.30 – 06.50**)
+  - Siang: **13.00 – 13.20** (Kecuali Jum'at: **12.25 – 12.45**)
   - Sore: **17.30 – 17.50**
 - **Champion Squad (7x5x10 menit)**:
-  - Titik dasar: 06.00, 09.00, 12.00, 15.00, 18.00.
-  - *Penyesuaian saat jam mengajar*:
-    - **Senin**: 06.00, **10.20** (ba'da X-1), 12.00, 15.00, 18.00
-    - **Kamis**: 06.00, **09.40** (ba'da X-3), 12.00, 15.00, 18.00
-    - **Sabtu**: 06.00, **09.40** (ba'da X-1), 12.00, 15.00, 18.00
-    - Hari lain: 06.00, 09.00, 12.00, 15.00, 18.00
+  - **Senin**: 06.20, 10.20 (ba'da X-1), 12.30 (ba'da Dzuhur), 15.00, 18.25 (ba'da Maghrib)
+  - **Selasa & Rabu**: 06.20, 09.00, 12.30, 15.00, 18.25
+  - **Kamis**: 06.20, 09.40 (ba'da X-3), 12.30, 15.00, 18.25
+  - **Jum'at**: 06.20, 09.00, 13.25 (ba'da Mentoring 2), 15.00, 18.25
+  - **Sabtu**: 06.20, 09.40 (ba'da X-1), 12.30, 15.00, 18.25
+  - **Ahad**: 06.50 (ba'da sarapan), 09.00, 12.30, 15.00, 18.25
 
 ---
 
@@ -79,113 +79,95 @@ Dokumen ini memuat spesifikasi jadwal terperinci, model data, algoritma penjadwa
 ---
 
 ### D. Rekomendasi Alokasi Floating Habit & Prep Slots
-Target alokasi mingguan untuk slot fleksibel/mandiri:
+Target alokasi mingguan untuk slot fleksibel/mandiri (Rasio 80:10:10):
 1. **Prepare Teaching Time**: 20–30 menit per hari aktif mengajar (Senin, Kamis, Jum'at, Sabtu + Minggu malam) = ~120–150 menit/minggu.
 2. **Prepare Chess Club**: 30 menit (Senin 15.30 – 16.00).
-3. **Prepare Math Olympiad**: 2x60 menit (Selasa & Sabtu sebelum kelas atau di slot pagi).
+3. **Prepare Math Olympiad**: 2x60 menit (Selasa & Sabtu).
 4. **Kurikulum Time + Incidental**: 7x20 menit (20 menit setiap hari).
 5. **Qur'an Time (Muraja'ah + Ziyadah)**: 7x2x30 menit (Ba'da Subuh & Ba'da Maghrib/Isya).
-6. **Bayyinah Time**: 7x60 menit (Slot belajar terfokus harian, misal 04.30–05.30 pagi).
-7. **Coding Time / Vibe Code**: 7x2x40 menit (Siang / Sore / Malam).
-8. **Chess Time**: 7x2x20 menit (Jeda produktif / refresh otak).
-9. **Flexible / Buffer Time**: 10% dari total waking hours (~12 jam seminggu untuk mobilitas, istirahat tak terduga, dan jeda antar-aktivitas).
+6. **Bayyinah Time**: 7x60 menit (Slot belajar terfokus harian, 06.30–07.30).
+7. **Coding Time / Vibe Code**: 7x2x40 menit (Sesi 1 & 2 di slot produktif).
+8. **Chess Time**: 7x2x20 menit (Sesi 1 subuh & Sesi 2 malam).
+9. **Flexible / Buffer Time**: ~26% alokasi jeda/istirahat tak terduga.
 
 ---
 
 ## 2. Struktur Data & Model
 
-### Event Model (Template / Recurring / Custom)
+### Event Model
 ```javascript
 {
-  id: "evt_101",
-  title: "X-3 MTU Teaching",
-  category: "teaching", // "teaching" | "prayer" | "habit" | "prep" | "class" | "routine" | "rest" | "flexible"
-  dayOfWeek: 1,         // 0: Ahad, 1: Senin, ..., 6: Sabtu
-  startTime: "07:40",   // "HH:mm" atau dinamis "{fajr}+15"
-  endTime: "09:00",
-  durationMinutes: 80,
-  isDynamicPrayer: false,
-  prayerAnchor: null,   // null | { prayer: "fajr"|"dhuhr"|"asr"|"maghrib"|"isha", offset: 15 }
-  color: "#3B82F6",
-  isLocked: true        // true jika fixed anchor, false jika floating
-}
-```
-
-### Execution Log Model (Daily Actual Tracker)
-```javascript
-{
-  id: "log_20260821_evt_101",
+  id: "evt_2026-08-21_tpl_teach_1_1",
+  templateId: "tpl_teach_1_1",
+  title: "Mengajar X-3 MTU",
+  category: "teaching", // "teaching" | "class" | "prayer" | "habit" | "prep" | "routine"
   date: "2026-08-21",
-  eventId: "evt_101",
-  eventTitle: "X-3 MTU Teaching",
-  plannedStartTime: "07:40",
-  plannedEndTime: "09:00",
-  status: "ON_TIME",    // "ON_TIME" | "EARLIER" | "DELAYED" | "RESCHEDULED" | "CANCELLED"
-  varianceMinutes: 0,   // -10 (10 menit lebih cepat), +5 (5 menit telat), 0
-  reason: "",           // Alasan jika batal, terlambat, lebih cepat, atau reschedule
-  rescheduledTo: null,  // { date, startTime, endTime }
-  evaluatedAt: "2026-08-21T09:05:00Z"
-}
-```
-
-### Weekly Retrospective Model
-```javascript
-{
-  weekId: "2026-W34",
-  startDate: "2026-08-17",
-  endDate: "2026-08-23",
-  totalPlannedMinutes: 4200,
-  totalExecutedMinutes: 3950,
-  onTimeCount: 42,
-  delayedCount: 4,
-  earlierCount: 2,
-  cancelledCount: 1,
-  rescheduledCount: 3,
-  categoryBreakdown: {
-    productivePercent: 78.5,
-    restPercent: 11.0,
-    flexiblePercent: 10.5
-  },
-  reflections: {
-    wins: "Target coding dan mengajar terlaksana 100%.",
-    bottlenecks: "Senin siang sering kehabisan energi di slot PM.",
-    improvementsNextWeek: "Tambahkan jeda nafas 10 menit sebelum kelas PM."
-  }
+  dayOfWeek: 5,
+  startTime: "07:40",
+  endTime: "08:20",
+  startMinutes: 460,
+  endMinutes: 500,
+  durationMinutes: 40,
+  isDynamicPrayer: false,
+  prayerAnchor: null,
+  color: "#3B82F6",
+  isLocked: true,
+  status: "PLANNED",   // "PLANNED" | "ON_TIME" | "EARLIER" | "DELAYED" | "RESCHEDULED" | "CANCELLED"
+  varianceMinutes: 0,
+  reason: "",
+  notes: ""
 }
 ```
 
 ---
 
-## 3. Tahapan Pengembangan (Phased Roadmap)
+## 3. Tahapan Pengembangan & Status Progres
 
-### Phase 1: Core Engine & Prayer Calculations
-- [ ] Implementasi algoritma perhitungan waktu sholat offline (Adhan calculation Kemenag).
-- [ ] Pengujian presisi koordinat Sukabumi (Goalpara).
-- [ ] Konfigurasi default master schedule (Fixed, Floating, Rutinitas, Sholat, Imam & Muadzin).
+### Phase 1: Core Engine & Prayer Calculations `[DONE]`
+- [x] Implementasi algoritma perhitungan waktu sholat offline standar Kemenag RI (Goalpara Sukabumi).
+- [x] Pengujian presisi koordinat Sukabumi (Lat: -6.877°, Long: 106.965°, Elevasi: ~800m dpl).
+- [x] Konfigurasi master schedule templates (Fixed, Floating, Rutinitas, Sholat, Tugas Imam/Muadzin).
 
-### Phase 2: Calendar UI & Smart Slot Distribution
-- [ ] Timegrid Kalender (Tampilan Mingguan 7 Hari & Tampilan Harian Fokus).
-- [ ] Smart Slot Generator: menyebar floating habit secara proporsional di slot kosong.
-- [ ] Indikator visual warna kategori (Mengajar, Ibadah, Coding, Belajar, Istirahat, Fleksibel).
-- [ ] Drag-and-drop & Manual Edit untuk penyesuaian cepat jadwal.
+### Phase 2: Calendar UI & Smart Slot Distribution `[DONE]`
+- [x] Timegrid Kalender Mingguan (7 Kolom) & Harian Responsif.
+- [x] Rule-based Smart Scheduler: menyebar floating habit secara proporsional dengan **0 collision**.
+- [x] Density Switcher (Padat: 60px, Normal: 80px, Luas: 105px) dan kartu jadwal ringkas (≤25m).
+- [x] Batas potong grid visual presisi (03:00 - 24:00) agar jadwal tidur tidak melompat.
 
-### Phase 3: Real-time Execution & Variance Logger
-- [ ] Modal interaktif 1-klik untuk status eksekusi:
+### Phase 3: Real-time Execution & Variance Logger `[DONE]`
+- [x] Modal interaktif 1-klik untuk status eksekusi:
   - `[✓] Tepat Waktu`
   - `[⚡] Lebih Cepat (-X menit)`
   - `[⏰] Terlambat (+X menit)`
-  - `[🔄] Reschedule (Ganti slot)`
-  - `[✕] Batal / Skip (Wajib isi alasan)`
-- [ ] Slot keterangan / log refleksi instan di setiap card jadwal.
+  - `[🔄] Reschedule`
+  - `[✕] Batal (Wajib alasan)`
+- [x] Badge visual warna-warni pada kartu kegiatan untuk status eksekusi.
 
-### Phase 4: Weekly Review & Retrospective Dashboard
-- [ ] Kalkulator rasio waktu riil (Productive % vs Rest % vs Flexible %).
-- [ ] Ringkasan statistik kepatuhan jadwal mingguan (On-Time Rate, Top Delay Reasons).
-- [ ] Form Refleksi Mingguan (Wins, Bottlenecks, Next Week Adjustments).
-- [ ] Tombol *Apply / Clone Schedule to Next Week*.
+### Phase 4: Weekly Review & Retrospective Dashboard `[DONE]`
+- [x] Real-time Ratio Tracker Bar (80% Produktif, 10% Istirahat, 10% Fleksibel).
+- [x] Dashboard Evaluasi Mingguan (Analisis kepatuhan, Top Issues, Form Refleksi).
+- [x] Tombol *Apply / Clone Schedule to Next Week*.
 
-### Phase 5: Persistence, Offline Support & Polish
-- [ ] Penyimpanan lokal otomatis (`IndexedDB` & `localStorage`).
-- [ ] Fitur Export JSON & Import JSON (Backup & Restore).
-- [ ] Dark Mode / Light Mode toggle.
-- [ ] Responsive styling (Desktop & Mobile view).
+### Phase 5: Storage & Clean Slate Reset `[DONE]`
+- [x] Hybrid Persistence layer (`IndexedDB` + `localStorage`).
+- [x] Fitur Export JSON & Import JSON untuk arsip dan backup offline.
+- [x] Tombol *⚡ Reset ke Default* dengan ID deterministik anti-duplikasi.
+
+### Phase 6: Multi-Device Cloud Sync (Firebase Firestore & Auth) `[DONE]`
+- [x] Integrasi Firebase Modular SDK (ESM) dengan *Persistent Multi-Tab Offline Cache*.
+- [x] Google Authentication (1-Klik Sign-In) untuk kepemilikan data privat.
+- [x] Sinkronisasi instan koleksi `events`, `execution_logs`, dan `weekly_reviews` ke Cloud Firestore.
+- [x] Modal ⚙️ Cloud & AI untuk konfigurasi `firebaseConfig`, Gemini API Key, dan tombol sinkronisasi.
+
+### Phase 7: Conversational AI Copilot (Google Gemini & Tools) `[DONE]`
+- [x] Widget Floating Action Button & Slide-over Chat Drawer (`aiChatDrawer.js`, `aiDrawer.css`).
+- [x] Integrasi Google Gemini API dengan auto-discovery model (`gemini-3.5-flash-lite` 500 RPD, `gemini-3.6-flash`).
+- [x] Function Calling / Tool Calling Engine:
+  - `get_current_and_upcoming_schedule` (Jadwal terdekat real-time WIB)
+  - `get_daily_schedule` (Baca seluruh jadwal hari tertentu)
+  - `update_event_time` (Geser / edit jadwal via chat)
+  - `add_custom_event` (Tambah agenda dadakan)
+  - `delete_event` (Hapus agenda)
+  - `log_event_execution` (Catat status eksekusi & alasan)
+  - `get_weekly_productivity_summary` (Coaching rasio 80:10:10)
+- [x] Penguncian zona waktu presisi WIB (*Asia/Jakarta*) dengan metadata real-time di setiap percakapan.
