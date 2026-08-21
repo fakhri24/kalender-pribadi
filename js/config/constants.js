@@ -223,49 +223,55 @@ export const MASTER_SCHEDULE_TEMPLATES = [
   })),
 
   // Champion Squad (5x10m per day, adjusted dynamically for teaching & prayer times)
-  // Senin: 06.20, 10.20 (ba'da X-1), 12.30 (ba'da Dzuhur), 15.00, 18.25 (ba'da Maghrib)
+  // Senin: 06.20, 10.20 (ba'da X-1), 12.30 (ba'da Dzuhur), 15.00, 18.30 (ba'da Maghrib)
   { templateId: 'tpl_cs_1_1', title: 'Champion Squad 1', category: 'habit', dayOfWeek: 1, startTime: '06:20', endTime: '06:30', durationMinutes: 10 },
   { templateId: 'tpl_cs_1_2', title: 'Champion Squad 2 (Ba\'da X-1)', category: 'habit', dayOfWeek: 1, startTime: '10:20', endTime: '10:30', durationMinutes: 10 },
   { templateId: 'tpl_cs_1_3', title: 'Champion Squad 3 (Ba\'da Dzuhur)', category: 'habit', dayOfWeek: 1, startTime: '12:30', endTime: '12:40', durationMinutes: 10 },
   { templateId: 'tpl_cs_1_4', title: 'Champion Squad 4', category: 'habit', dayOfWeek: 1, startTime: '15:00', endTime: '15:10', durationMinutes: 10 },
-  { templateId: 'tpl_cs_1_5', title: 'Champion Squad 5 (Ba\'da Maghrib)', category: 'habit', dayOfWeek: 1, startTime: '18:25', endTime: '18:35', durationMinutes: 10 },
+  { templateId: 'tpl_cs_1_5', title: 'Champion Squad 5 (Ba\'da Maghrib)', category: 'habit', dayOfWeek: 1, startTime: '18:30', endTime: '18:40', durationMinutes: 10 },
 
-  // Kamis: 06.20, 09.40 (ba'da X-3), 12.30 (ba'da Dzuhur), 15.00, 18.25 (ba'da Maghrib)
+  // Kamis: 06.20, 09.40 (ba'da X-3), 12.30 (ba'da Dzuhur), 15.00, 18.30 (ba'da Maghrib)
   { templateId: 'tpl_cs_4_1', title: 'Champion Squad 1', category: 'habit', dayOfWeek: 4, startTime: '06.20'.replace('.', ':'), endTime: '06:30', durationMinutes: 10 },
   { templateId: 'tpl_cs_4_2', title: 'Champion Squad 2 (Ba\'da X-3)', category: 'habit', dayOfWeek: 4, startTime: '09:40', endTime: '09:50', durationMinutes: 10 },
   { templateId: 'tpl_cs_4_3', title: 'Champion Squad 3 (Ba\'da Dzuhur)', category: 'habit', dayOfWeek: 4, startTime: '12:30', endTime: '12:40', durationMinutes: 10 },
   { templateId: 'tpl_cs_4_4', title: 'Champion Squad 4', category: 'habit', dayOfWeek: 4, startTime: '15:00', endTime: '15:10', durationMinutes: 10 },
-  { templateId: 'tpl_cs_4_5', title: 'Champion Squad 5 (Ba\'da Maghrib)', category: 'habit', dayOfWeek: 4, startTime: '18:25', endTime: '18:35', durationMinutes: 10 },
+  { templateId: 'tpl_cs_4_5', title: 'Champion Squad 5 (Ba\'da Maghrib)', category: 'habit', dayOfWeek: 4, startTime: '18:30', endTime: '18:40', durationMinutes: 10 },
 
-  // Sabtu: 06.20, 09.40 (ba'da X-1), 12.30 (ba'da Dzuhur), 15.00, 18.25 (ba'da Maghrib)
+  // Sabtu: 06.20, 09.40 (ba'da X-1), 12.30 (ba'da Dzuhur), 15.00, 18.30 (ba'da Maghrib)
   { templateId: 'tpl_cs_6_1', title: 'Champion Squad 1', category: 'habit', dayOfWeek: 6, startTime: '06:20', endTime: '06:30', durationMinutes: 10 },
   { templateId: 'tpl_cs_6_2', title: 'Champion Squad 2 (Ba\'da X-1)', category: 'habit', dayOfWeek: 6, startTime: '09:40', endTime: '09:50', durationMinutes: 10 },
   { templateId: 'tpl_cs_6_3', title: 'Champion Squad 3 (Ba\'da Dzuhur)', category: 'habit', dayOfWeek: 6, startTime: '12:30', endTime: '12:40', durationMinutes: 10 },
   { templateId: 'tpl_cs_6_4', title: 'Champion Squad 4', category: 'habit', dayOfWeek: 6, startTime: '15:00', endTime: '15:10', durationMinutes: 10 },
-  { templateId: 'tpl_cs_6_5', title: 'Champion Squad 5 (Ba\'da Maghrib)', category: 'habit', dayOfWeek: 6, startTime: '18:25', endTime: '18:35', durationMinutes: 10 },
+  { templateId: 'tpl_cs_6_5', title: 'Champion Squad 5 (Ba\'da Maghrib)', category: 'habit', dayOfWeek: 6, startTime: '18:30', endTime: '18:40', durationMinutes: 10 },
 
-  // Ahad: 06.50 (ba'da sarapan), 09.00, 12.30, 15.00, 18.25
+  // Ahad: 06.50 (ba'da sarapan), 09.00, 12.30, 15.00, 18.30
   { templateId: 'tpl_cs_0_1', title: 'Champion Squad 1', category: 'habit', dayOfWeek: 0, startTime: '06:50', endTime: '07:00', durationMinutes: 10 },
   { templateId: 'tpl_cs_0_2', title: 'Champion Squad 2', category: 'habit', dayOfWeek: 0, startTime: '09:00', endTime: '09:10', durationMinutes: 10 },
   { templateId: 'tpl_cs_0_3', title: 'Champion Squad 3 (Ba\'da Dzuhur)', category: 'habit', dayOfWeek: 0, startTime: '12:30', endTime: '12:40', durationMinutes: 10 },
   { templateId: 'tpl_cs_0_4', title: 'Champion Squad 4', category: 'habit', dayOfWeek: 0, startTime: '15:00', endTime: '15:10', durationMinutes: 10 },
-  { templateId: 'tpl_cs_0_5', title: 'Champion Squad 5 (Ba\'da Maghrib)', category: 'habit', dayOfWeek: 0, startTime: '18:25', endTime: '18:35', durationMinutes: 10 },
+  { templateId: 'tpl_cs_0_5', title: 'Champion Squad 5 (Ba\'da Maghrib)', category: 'habit', dayOfWeek: 0, startTime: '18:30', endTime: '18:40', durationMinutes: 10 },
 
   // Selasa & Rabu
-  ...[2, 3].flatMap(day => [
-    { templateId: `tpl_cs_${day}_1`, title: 'Champion Squad 1', category: 'habit', dayOfWeek: day, startTime: '06:20', endTime: '06:30', durationMinutes: 10 },
-    { templateId: `tpl_cs_${day}_2`, title: 'Champion Squad 2', category: 'habit', dayOfWeek: day, startTime: '09:00', endTime: '09:10', durationMinutes: 10 },
-    { templateId: `tpl_cs_${day}_3`, title: 'Champion Squad 3 (Ba\'da Dzuhur)', category: 'habit', dayOfWeek: day, startTime: '12:30', endTime: '12:40', durationMinutes: 10 },
-    { templateId: `tpl_cs_${day}_4`, title: 'Champion Squad 4', category: 'habit', dayOfWeek: day, startTime: '15:00', endTime: '15:10', durationMinutes: 10 },
-    { templateId: `tpl_cs_${day}_5`, title: 'Champion Squad 5 (Ba\'da Maghrib)', category: 'habit', dayOfWeek: day, startTime: '18:25', endTime: '18:35', durationMinutes: 10 }
-  ]),
+  // Selasa (CS 5 ba'da Isya karena ba'da Maghrib adalah KBM Tahfidz)
+  { templateId: 'tpl_cs_2_1', title: 'Champion Squad 1', category: 'habit', dayOfWeek: 2, startTime: '06:20', endTime: '06:30', durationMinutes: 10 },
+  { templateId: 'tpl_cs_2_2', title: 'Champion Squad 2', category: 'habit', dayOfWeek: 2, startTime: '09:00', endTime: '09:10', durationMinutes: 10 },
+  { templateId: 'tpl_cs_2_3', title: 'Champion Squad 3 (Ba\'da Dzuhur)', category: 'habit', dayOfWeek: 2, startTime: '12:30', endTime: '12:40', durationMinutes: 10 },
+  { templateId: 'tpl_cs_2_4', title: 'Champion Squad 4', category: 'habit', dayOfWeek: 2, startTime: '15:00', endTime: '15:10', durationMinutes: 10 },
+  { templateId: 'tpl_cs_2_5', title: 'Champion Squad 5 (Ba\'da Isya)', category: 'habit', dayOfWeek: 2, startTime: '19:30', endTime: '19:40', durationMinutes: 10 },
 
-  // Jum'at (CS 3 after Mentoring 2 at 13.25)
+  // Rabu
+  { templateId: 'tpl_cs_3_1', title: 'Champion Squad 1', category: 'habit', dayOfWeek: 3, startTime: '06:20', endTime: '06:30', durationMinutes: 10 },
+  { templateId: 'tpl_cs_3_2', title: 'Champion Squad 2', category: 'habit', dayOfWeek: 3, startTime: '09:00', endTime: '09:10', durationMinutes: 10 },
+  { templateId: 'tpl_cs_3_3', title: 'Champion Squad 3 (Ba\'da Dzuhur)', category: 'habit', dayOfWeek: 3, startTime: '12:30', endTime: '12:40', durationMinutes: 10 },
+  { templateId: 'tpl_cs_3_4', title: 'Champion Squad 4', category: 'habit', dayOfWeek: 3, startTime: '15:00', endTime: '15:10', durationMinutes: 10 },
+  { templateId: 'tpl_cs_3_5', title: 'Champion Squad 5 (Ba\'da Maghrib)', category: 'habit', dayOfWeek: 3, startTime: '18:30', endTime: '18:40', durationMinutes: 10 },
+
+  // Jum'at (CS 3 after Mentoring 2 at 13.25, CS 5 ba'da Isya karena ba'da Maghrib adalah KBM Tahfidz)
   { templateId: 'tpl_cs_5_1', title: 'Champion Squad 1', category: 'habit', dayOfWeek: 5, startTime: '06:20', endTime: '06:30', durationMinutes: 10 },
   { templateId: 'tpl_cs_5_2', title: 'Champion Squad 2', category: 'habit', dayOfWeek: 5, startTime: '09:00', endTime: '09:10', durationMinutes: 10 },
   { templateId: 'tpl_cs_5_3', title: 'Champion Squad 3 (Ba\'da Mentoring 2)', category: 'habit', dayOfWeek: 5, startTime: '13:25', endTime: '13:35', durationMinutes: 10 },
   { templateId: 'tpl_cs_5_4', title: 'Champion Squad 4', category: 'habit', dayOfWeek: 5, startTime: '15:00', endTime: '15:10', durationMinutes: 10 },
-  { templateId: 'tpl_cs_5_5', title: 'Champion Squad 5 (Ba\'da Maghrib)', category: 'habit', dayOfWeek: 5, startTime: '18:25', endTime: '18:35', durationMinutes: 10 },
+  { templateId: 'tpl_cs_5_5', title: 'Champion Squad 5 (Ba\'da Isya)', category: 'habit', dayOfWeek: 5, startTime: '19:30', endTime: '19:40', durationMinutes: 10 },
 
   // ==========================================
   // DYNAMIC PRAYER ANCHORS & SPECIAL DUTIES
@@ -315,11 +321,11 @@ export const MASTER_SCHEDULE_TEMPLATES = [
   // Maghrib: Tuesday has Imam duty, Sunday has Muadzin duty
   ...[1, 3, 4, 5, 6].map(day => ({
     templateId: `tpl_prayer_maghrib_${day}`,
-    title: 'Sholat Maghrib Berjamaah',
+    title: 'Sholat Maghrib & Dzikir Petang',
     category: 'prayer',
     dayOfWeek: day,
     isDynamicPrayer: true,
-    prayerAnchor: { prayer: 'maghrib', offset: 0, duration: 25 },
+    prayerAnchor: { prayer: 'maghrib', offset: 0, duration: 30 },
     isLocked: true
   })),
 
@@ -335,14 +341,14 @@ export const MASTER_SCHEDULE_TEMPLATES = [
   })),
 
   // Special Duties (Imam & Muadzin)
-  // Imam Subuh: Senin & Kamis (Adzan + 15m, 30m)
+  // Imam Subuh: Senin & Kamis (Mulai adzan, durasi 30m sama seperti sholat Subuh biasa)
   {
     templateId: 'tpl_duty_imam_subuh_mon',
     title: '🕌 Tugas Imam Subuh',
     category: 'prayer',
     dayOfWeek: 1,
     isDynamicPrayer: true,
-    prayerAnchor: { prayer: 'fajr', offset: 15, duration: 30 },
+    prayerAnchor: { prayer: 'fajr', offset: 0, duration: 30 },
     isLocked: true
   },
   {
@@ -351,47 +357,47 @@ export const MASTER_SCHEDULE_TEMPLATES = [
     category: 'prayer',
     dayOfWeek: 4,
     isDynamicPrayer: true,
-    prayerAnchor: { prayer: 'fajr', offset: 15, duration: 30 },
+    prayerAnchor: { prayer: 'fajr', offset: 0, duration: 30 },
     isLocked: true
   },
-  // Imam Maghrib: Selasa (Adzan + 15m, 30m)
+  // Imam Maghrib: Selasa (Mulai adzan, durasi 30m sama seperti sholat Maghrib & dzikir biasa)
   {
     templateId: 'tpl_duty_imam_maghrib_tue',
     title: '🕌 Tugas Imam Maghrib',
     category: 'prayer',
     dayOfWeek: 2,
     isDynamicPrayer: true,
-    prayerAnchor: { prayer: 'maghrib', offset: 15, duration: 30 },
+    prayerAnchor: { prayer: 'maghrib', offset: 0, duration: 30 },
     isLocked: true
   },
-  // Imam Isya: Ahad (Adzan + 5m, 15m)
+  // Imam Isya: Ahad (Mulai adzan, durasi 25m sama seperti sholat Isya biasa)
   {
     templateId: 'tpl_duty_imam_isha_sun',
     title: '🕌 Tugas Imam Isya',
     category: 'prayer',
     dayOfWeek: 0,
     isDynamicPrayer: true,
-    prayerAnchor: { prayer: 'isha', offset: 5, duration: 15 },
+    prayerAnchor: { prayer: 'isha', offset: 0, duration: 25 },
     isLocked: true
   },
-  // Muadzin Ashar: Sabtu (Adzan - 5m, 10m)
+  // Muadzin Ashar: Sabtu (Adzan - 5m, total durasi 30m: 5m persiapan/adzan + 25m sholat berjamaah)
   {
     templateId: 'tpl_duty_muadzin_asr_sat',
     title: '📢 Tugas Muadzin Ashar',
     category: 'prayer',
     dayOfWeek: 6,
     isDynamicPrayer: true,
-    prayerAnchor: { prayer: 'asr', offset: -5, duration: 10 },
+    prayerAnchor: { prayer: 'asr', offset: -5, duration: 30 },
     isLocked: true
   },
-  // Muadzin Maghrib: Ahad (Adzan - 5m, 10m)
+  // Muadzin Maghrib: Ahad (Adzan - 5m, total durasi 35m: 5m persiapan/adzan + 30m sholat berjamaah & dzikir)
   {
     templateId: 'tpl_duty_muadzin_maghrib_sun',
     title: '📢 Tugas Muadzin Maghrib',
     category: 'prayer',
     dayOfWeek: 0,
     isDynamicPrayer: true,
-    prayerAnchor: { prayer: 'maghrib', offset: -5, duration: 10 },
+    prayerAnchor: { prayer: 'maghrib', offset: -5, duration: 35 },
     isLocked: true
   },
 
@@ -399,6 +405,7 @@ export const MASTER_SCHEDULE_TEMPLATES = [
   // FIXED TEACHING & CLASSES
   // ==========================================
   // SENIN (1)
+  { templateId: 'tpl_teach_tahfidz_mon', title: 'KBM Tahfidz XI.MIPA-2', category: 'teaching', dayOfWeek: 1, isDynamicPrayer: true, prayerAnchor: { prayer: 'fajr', offset: 30, duration: 30 }, isLocked: true },
   { templateId: 'tpl_teach_mon_1', title: 'Mengajar X-3 MTU', category: 'teaching', dayOfWeek: 1, startTime: '07:40', endTime: '09:00', durationMinutes: 80, isLocked: true },
   { templateId: 'tpl_teach_mon_2', title: 'Mengajar X-1 MTU', category: 'teaching', dayOfWeek: 1, startTime: '09:00', endTime: '10:20', durationMinutes: 80, isLocked: true },
   { templateId: 'tpl_teach_mon_3', title: 'Mengajar X-2 MTU', category: 'teaching', dayOfWeek: 1, startTime: '10:40', endTime: '12:00', durationMinutes: 80, isLocked: true },
@@ -408,8 +415,11 @@ export const MASTER_SCHEDULE_TEMPLATES = [
 
   // SELASA (2)
   { templateId: 'tpl_class_tue_math', title: 'Math Olympiad', category: 'class', dayOfWeek: 2, startTime: '16:15', endTime: '17:15', durationMinutes: 60, isLocked: true },
+  { templateId: 'tpl_teach_tahfidz_tue', title: 'KBM Tahfidz XI.MIPA-2', category: 'teaching', dayOfWeek: 2, isDynamicPrayer: true, prayerAnchor: { prayer: 'maghrib', offset: 30, endPrayer: 'isha' }, isLocked: true },
+  { templateId: 'tpl_class_tue_privat_math', title: 'Privat Matematika (Salma & Ghina)', category: 'class', dayOfWeek: 2, startTime: '19:45', endTime: '20:45', durationMinutes: 60, isLocked: true },
 
   // RABU (3)
+  { templateId: 'tpl_teach_tahfidz_wed', title: 'KBM Tahfidz XI.MIPA-2', category: 'teaching', dayOfWeek: 3, isDynamicPrayer: true, prayerAnchor: { prayer: 'fajr', offset: 30, duration: 30 }, isLocked: true },
   { templateId: 'tpl_class_wed_eve', title: 'Additional Evening Class', category: 'class', dayOfWeek: 3, startTime: '16:15', endTime: '17:15', durationMinutes: 60, isLocked: true },
   { templateId: 'tpl_class_wed_takhosus', title: 'Takhosus Tahfidz', category: 'class', dayOfWeek: 3, startTime: '19:45', endTime: '20:45', durationMinutes: 60, isLocked: true },
 
@@ -425,6 +435,7 @@ export const MASTER_SCHEDULE_TEMPLATES = [
   { templateId: 'tpl_class_fri_mentor_1', title: 'Mentoring Sesi 1', category: 'class', dayOfWeek: 5, startTime: '11:20', endTime: '12:00', durationMinutes: 40, isLocked: true },
   { templateId: 'tpl_class_fri_mentor_2', title: 'Mentoring Sesi 2', category: 'class', dayOfWeek: 5, startTime: '12:45', endTime: '13:25', durationMinutes: 40, isLocked: true },
   { templateId: 'tpl_class_fri_matriculation', title: 'Matriculation Numeration Class', category: 'class', dayOfWeek: 5, startTime: '16:15', endTime: '17:15', durationMinutes: 60, isLocked: true },
+  { templateId: 'tpl_teach_tahfidz_fri', title: 'KBM Tahfidz XI.MIPA-2', category: 'teaching', dayOfWeek: 5, isDynamicPrayer: true, prayerAnchor: { prayer: 'maghrib', offset: 30, endPrayer: 'isha' }, isLocked: true },
   { templateId: 'tpl_class_fri_night', title: 'Additional Night Class', category: 'class', dayOfWeek: 5, startTime: '20:00', endTime: '20:45', durationMinutes: 45, isLocked: true },
 
   // SABTU (6)

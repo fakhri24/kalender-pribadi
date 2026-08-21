@@ -1,5 +1,5 @@
 {
-  "version": "1.0.5",
-  "releasedAt": "2026-08-21T13:28:00+07:00",
-  "changeNotes": "Peningkatan akurasi timezone AI tools, batch delete storage, stopPropagation tombol eksekusi, dan sinkronisasi versi backup"
+  "version": "1.0.9",
+  "releasedAt": "2026-08-21T14:52:00+07:00",
+  "changeNotes": "Penyetaraan durasi Sholat Maghrib & Dzikir Petang menjadi 30 menit (serupa Subuh) dan penyesuaian jadwal ba'da Maghrib"
 }

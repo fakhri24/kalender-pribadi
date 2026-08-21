@@ -126,6 +126,13 @@ export function calculatePrayerTimes(date = new Date(), customLocation = {}) {
   const ishaDec = solarNoonHours + ishaHA + ihtiyatHours;
   const imsakDec = fajrDec - (10 / 60.0);
 
+  // SMA Albayan Goalpara special rule:
+  // Senin - Jum'at (dayOfWeek 1..5): KBM selesai jam 15.40, maka adzan Ashar tepat 15.40 (940 menit)
+  // Sabtu (6) & Ahad (0): Mengikuti perhitungan astronomis matahari normal
+  const dayOfWeek = d.getDay();
+  const isMonToFri = dayOfWeek >= 1 && dayOfWeek <= 5;
+  const asrMinutes = isMonToFri ? (15 * 60 + 40) : Math.round(fixHour(asrDec) * 60);
+
   // Convert to minutes from midnight
   const timesInMinutes = {
     imsak: Math.round(fixHour(imsakDec) * 60),
@@ -133,7 +140,7 @@ export function calculatePrayerTimes(date = new Date(), customLocation = {}) {
     sunrise: Math.round(fixHour(sunriseDec) * 60),
     dhuha: Math.round(fixHour(dhuhaDec) * 60),
     dhuhr: Math.round(fixHour(dhuhrDec) * 60),
-    asr: Math.round(fixHour(asrDec) * 60),
+    asr: asrMinutes,
     maghrib: Math.round(fixHour(maghribDec) * 60),
     isha: Math.round(fixHour(ishaDec) * 60)
   };

@@ -255,7 +255,7 @@ export class SchedulerEngine {
         title: 'Prepare Chess Club',
         category: 'prep',
         durationMinutes: 30,
-        targetWindow: { start: timeToMinutes('15:15'), end: timeToMinutes('16:15') }
+        targetWindow: { start: timeToMinutes('15:10'), end: timeToMinutes('15:40') }
       });
       habitsToPlace.push({
         id: `flt_${dateStr}_prep_teaching_mon`,
@@ -270,7 +270,7 @@ export class SchedulerEngine {
         title: 'Prepare Math Olympiad (Selasa)',
         category: 'prep',
         durationMinutes: 60,
-        targetWindow: { start: timeToMinutes('14:30'), end: timeToMinutes('16:15') }
+        targetWindow: { start: timeToMinutes('14:00'), end: timeToMinutes('15:40') }
       });
     } else if (dayOfWeek === 4) { // Kamis
       habitsToPlace.push({
@@ -329,11 +329,11 @@ export class SchedulerEngine {
       title: 'Coding / Vibe Code Sesi 1',
       category: 'habit',
       durationMinutes: 40,
-      targetWindow: { start: timeToMinutes('13:30'), end: timeToMinutes('16:00') }
+      targetWindow: { start: timeToMinutes('13:30'), end: timeToMinutes('15:40') }
     });
 
     // 7. Qur'an Ziyadah (30m) - ba'da Maghrib
-    const maghribEnd = prayerTimes.rawMinutes.maghrib + 25;
+    const maghribEnd = prayerTimes.rawMinutes.maghrib + 30;
     habitsToPlace.push({
       id: `flt_${dateStr}_quran_ziyadah`,
       title: 'Qur\'an Time (Ziyadah)',

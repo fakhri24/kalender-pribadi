@@ -53,16 +53,24 @@ export class CalendarEvent {
       return;
     }
 
-    const { prayer, offset = 0, duration = 30 } = this.prayerAnchor;
+    const { prayer, offset = 0, duration = 30, endPrayer = null } = this.prayerAnchor;
     const baseMinutes = prayerTimes.rawMinutes[prayer.toLowerCase()];
     if (baseMinutes === undefined) return;
 
     const startMins = Math.max(0, Math.min(1439, baseMinutes + offset));
-    const endMins = Math.min(1439, startMins + duration);
+    let endMins;
+    let finalDuration = duration;
+
+    if (endPrayer && prayerTimes.rawMinutes[endPrayer.toLowerCase()] !== undefined) {
+      endMins = prayerTimes.rawMinutes[endPrayer.toLowerCase()];
+      finalDuration = Math.max(5, endMins - startMins);
+    } else {
+      endMins = Math.min(1439, startMins + duration);
+    }
 
     this.startTime = minutesToTime(startMins);
     this.endTime = minutesToTime(endMins);
-    this.durationMinutes = duration;
+    this.durationMinutes = finalDuration;
   }
 
   /**
