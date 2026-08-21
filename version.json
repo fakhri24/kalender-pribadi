@@ -1,5 +1,5 @@
 {
-  "version": "1.0.9",
-  "releasedAt": "2026-08-21T14:52:00+07:00",
-  "changeNotes": "Penyetaraan durasi Sholat Maghrib & Dzikir Petang menjadi 30 menit (serupa Subuh) dan penyesuaian jadwal ba'da Maghrib"
+  "version": "1.0.10",
+  "releasedAt": "2026-08-21T15:06:00+07:00",
+  "changeNotes": "Penambahan jadwal Piket Subuh Selasa & Sabtu ba'da Subuh (durasi 30 menit)"
 }

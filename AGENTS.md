@@ -36,7 +36,7 @@ Aplikasi ini adalah **Kalender Produktivitas Pribadi Berbasis Web (Offline-First
   - Full **Export/Import JSON** untuk backup, migrasi offline, dan arsip riwayat mingguan.
 - **Cache-Buster & Version Management Engine**:
   - **Single Source of Truth (`version.json`)**: Deteksi update otomatis membaca `version.json` langsung dari server tanpa duplikasi string hardcode di file JS (`getAppVersion()`).
-  - **Query-String Versioning**: Tag aset CSS & JS dinamis (`?v=1.0.9`) untuk memotong cache usang browser.
+  - **Query-String Versioning**: Tag aset CSS & JS dinamis (`?v=1.0.10`) untuk memotong cache usang browser.
   - **One-Click Cache Purge**: Pembersihan `CacheStorage` dan *force reload* instan dari UI Pengaturan.
 - **AI Intelligence & Tool Calling Engine**:
   - **Google Gemini API (v1beta)**: Model default `gemini-3.5-flash-lite` (kuota 500 RPD), `gemini-3.1-flash-lite`, dan `gemini-3.6-flash`.

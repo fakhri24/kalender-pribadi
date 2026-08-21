@@ -414,6 +414,7 @@ export const MASTER_SCHEDULE_TEMPLATES = [
   { templateId: 'tpl_class_mon_night', title: 'Additional Night Class', category: 'class', dayOfWeek: 1, startTime: '20:00', endTime: '20:45', durationMinutes: 45, isLocked: true },
 
   // SELASA (2)
+  { templateId: 'tpl_routine_piket_subuh_tue', title: 'Piket Subuh', category: 'routine', dayOfWeek: 2, isDynamicPrayer: true, prayerAnchor: { prayer: 'fajr', offset: 30, duration: 30 }, isLocked: true },
   { templateId: 'tpl_class_tue_math', title: 'Math Olympiad', category: 'class', dayOfWeek: 2, startTime: '16:15', endTime: '17:15', durationMinutes: 60, isLocked: true },
   { templateId: 'tpl_teach_tahfidz_tue', title: 'KBM Tahfidz XI.MIPA-2', category: 'teaching', dayOfWeek: 2, isDynamicPrayer: true, prayerAnchor: { prayer: 'maghrib', offset: 30, endPrayer: 'isha' }, isLocked: true },
   { templateId: 'tpl_class_tue_privat_math', title: 'Privat Matematika (Salma & Ghina)', category: 'class', dayOfWeek: 2, startTime: '19:45', endTime: '20:45', durationMinutes: 60, isLocked: true },
@@ -439,6 +440,7 @@ export const MASTER_SCHEDULE_TEMPLATES = [
   { templateId: 'tpl_class_fri_night', title: 'Additional Night Class', category: 'class', dayOfWeek: 5, startTime: '20:00', endTime: '20:45', durationMinutes: 45, isLocked: true },
 
   // SABTU (6)
+  { templateId: 'tpl_routine_piket_subuh_sat', title: 'Piket Subuh', category: 'routine', dayOfWeek: 6, isDynamicPrayer: true, prayerAnchor: { prayer: 'fajr', offset: 30, duration: 30 }, isLocked: true },
   { templateId: 'tpl_teach_sat_1', title: 'Mengajar X-3 MTU', category: 'teaching', dayOfWeek: 6, startTime: '07:00', endTime: '07:40', durationMinutes: 40, isLocked: true },
   { templateId: 'tpl_teach_sat_2', title: 'Mengajar X-2 MTU', category: 'teaching', dayOfWeek: 6, startTime: '08:20', endTime: '09:00', durationMinutes: 40, isLocked: true },
   { templateId: 'tpl_teach_sat_3', title: 'Mengajar X-1 MTU', category: 'teaching', dayOfWeek: 6, startTime: '09:00', endTime: '09:40', durationMinutes: 40, isLocked: true },

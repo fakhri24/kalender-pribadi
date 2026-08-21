@@ -47,6 +47,7 @@ Dokumen ini memuat spesifikasi jadwal terperinci, model data, algoritma penjadwa
   - 16.15 – 17.15: Chess Club (60m)
   - 20.00 – 20.45: Additional Night Class (45m)
 - **Selasa**:
+  - 05.10 – 05.40: Piket Subuh (30m, Ba'da Subuh)
   - 16.15 – 17.15: Math Olympiad (60m)
   - 18.29 – 19.05: KBM Tahfidz XI.MIPA-2 (Ba'da Maghrib s.d. Isya)
   - 19.45 – 20.45: Privat Matematika (Salma & Ghina) (60m)
@@ -71,6 +72,7 @@ Dokumen ini memuat spesifikasi jadwal terperinci, model data, algoritma penjadwa
   - 18.28 – 19.04: KBM Tahfidz XI.MIPA-2 (Ba'da Maghrib s.d. Isya)
   - 20.00 – 20.45: Additional Night Class (45m)
 - **Sabtu**:
+  - 05.08 – 05.38: Piket Subuh (30m, Ba'da Subuh)
   - 07.00 – 07.40: X-3 MTU (40m)
   - 08.20 – 09.00: X-2 MTU (40m)
   - 09.00 – 09.40: X-1 MTU (40m)
@@ -186,7 +188,8 @@ Target alokasi mingguan untuk slot fleksibel/mandiri (Rasio 80:10:10):
 ### Phase 9: Special Operational Rules, Academic Slot Additions & Single-Source Versioning `[DONE]`
 - [x] **Aturan Khusus Ashar Al-Bayan**: Penguncian adzan Ashar pukul 15:40 WIB khusus Senin–Jum'at (selesai KBM) dan astronomis di akhir pekan.
 - [x] **Standarisasi Maghrib & Tugas Masjid**: Durasi Maghrib 30 menit (sholat & dzikir petang), Imam Subuh/Maghrib 30m, Muadzin 30m/35m (Adzan - 5m).
-- [x] **Penambahan Slot Akademik Master**:
+- [x] **Penambahan Slot Akademik & Rutinitas Master**:
+  - *Piket Subuh*: Selasa & Sabtu ba'da Subuh (30m).
   - *Privat Matematika (Salma & Ghina)*: Selasa 19:45 – 20:45 (60m).
   - *KBM Tahfidz XI.MIPA-2 (Subuh)*: Senin & Rabu ba'da Subuh (30m).
   - *KBM Tahfidz XI.MIPA-2 (Maghrib)*: Selasa & Jum'at ba'da Maghrib s.d. Isya dengan dukungan kalkulasi dinamis `endPrayer: 'isha'`.
