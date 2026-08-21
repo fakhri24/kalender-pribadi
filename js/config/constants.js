@@ -199,14 +199,14 @@ export const MASTER_SCHEDULE_TEMPLATES = [
     durationMinutes: 20,
     isLocked: true
   })),
-  // Friday Lunch (after Mentoring Sesi 2 ends at 13.25)
+  // Friday Lunch (12.25 - 12.45, ba'da Sholat Jum'at, sebelum Mentoring Sesi 2)
   {
     templateId: 'tpl_eat_lunch_5',
-    title: 'Makan Siang (Ba\'da Mentoring 2)',
+    title: 'Makan Siang',
     category: 'routine',
     dayOfWeek: 5,
-    startTime: '13:25',
-    endTime: '13:45',
+    startTime: '12:25',
+    endTime: '12:45',
     durationMinutes: 20,
     isLocked: true
   },
@@ -260,10 +260,10 @@ export const MASTER_SCHEDULE_TEMPLATES = [
     { templateId: `tpl_cs_${day}_5`, title: 'Champion Squad 5 (Ba\'da Maghrib)', category: 'habit', dayOfWeek: day, startTime: '18:25', endTime: '18:35', durationMinutes: 10 }
   ]),
 
-  // Jum'at (CS 3 after Lunch & Mentoring 2)
+  // Jum'at (CS 3 after Mentoring 2 at 13.25)
   { templateId: 'tpl_cs_5_1', title: 'Champion Squad 1', category: 'habit', dayOfWeek: 5, startTime: '06:20', endTime: '06:30', durationMinutes: 10 },
   { templateId: 'tpl_cs_5_2', title: 'Champion Squad 2', category: 'habit', dayOfWeek: 5, startTime: '09:00', endTime: '09:10', durationMinutes: 10 },
-  { templateId: 'tpl_cs_5_3', title: 'Champion Squad 3 (Ba\'da Mentoring & Makan)', category: 'habit', dayOfWeek: 5, startTime: '13:45', endTime: '13:55', durationMinutes: 10 },
+  { templateId: 'tpl_cs_5_3', title: 'Champion Squad 3 (Ba\'da Mentoring 2)', category: 'habit', dayOfWeek: 5, startTime: '13:25', endTime: '13:35', durationMinutes: 10 },
   { templateId: 'tpl_cs_5_4', title: 'Champion Squad 4', category: 'habit', dayOfWeek: 5, startTime: '15:00', endTime: '15:10', durationMinutes: 10 },
   { templateId: 'tpl_cs_5_5', title: 'Champion Squad 5 (Ba\'da Maghrib)', category: 'habit', dayOfWeek: 5, startTime: '18:25', endTime: '18:35', durationMinutes: 10 },
 
@@ -281,7 +281,7 @@ export const MASTER_SCHEDULE_TEMPLATES = [
     isLocked: true
   })),
 
-  // Dzuhur / Sholat Jum'at (on Friday, 11:45 - 12:40)
+  // Dzuhur / Sholat Jum'at (on Friday, 25 minutes duration)
   ...[0, 1, 2, 3, 4, 6].map(day => ({
     templateId: `tpl_prayer_dhuhr_${day}`,
     title: 'Sholat Dzuhur Berjamaah',
@@ -297,7 +297,7 @@ export const MASTER_SCHEDULE_TEMPLATES = [
     category: 'prayer',
     dayOfWeek: 5,
     isDynamicPrayer: true,
-    prayerAnchor: { prayer: 'dhuhr', offset: -10, duration: 55 },
+    prayerAnchor: { prayer: 'dhuhr', offset: 0, duration: 25 },
     isLocked: true
   },
 

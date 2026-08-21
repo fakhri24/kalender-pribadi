@@ -59,7 +59,11 @@ Dokumen ini memuat spesifikasi jadwal terperinci, model data, algoritma penjadwa
 - **Jum'at**:
   - 07.40 – 08.20: X-2 PM (40m)
   - 10.40 – 11.20: X-1 PM (40m)
-  - 11.20 – 12.00 & 12.45 – 13.25: Mentoring Time (2x40m)
+  - 11.20 – 12.00: Mentoring Sesi 1 (40m)
+  - 12.00 – 12.25: 🕌 Sholat Jum'at Berjamaah (25m)
+  - 12.25 – 12.45: Makan Siang (20m, dinamis jika Jum'at molor tetapi selesai tetap 12.45)
+  - 12.45 – 13.25: Mentoring Sesi 2 (40m)
+  - 13.25 – 13.35: Champion Squad 3 (Ba'da Mentoring 2) (10m)
   - 16.15 – 17.15: Matriculation Numeration Class (60m)
   - 20.00 – 20.45: Additional Night Class (45m)
 - **Sabtu**:

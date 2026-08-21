@@ -124,10 +124,18 @@ export class SchedulerEngine {
                 b.endTime = minutesToTime(b.endMinutes + shift);
               }
             } else if (a.category === 'class' && a.title.includes('Mentoring Sesi 1') && b.category === 'prayer' && b.title.includes('Jum\'at')) {
-              // Case 3: Friday Mentoring 1 vs Sholat Jum'at
-              b.startTime = '12:00';
-              b.endTime = '12:45';
-              b.durationMinutes = 45;
+              // Case 3: Friday Mentoring 1 (ends 12:00) -> Sholat Jum'at starts 12:00 (duration 25 min)
+              const jumatStart = Math.max(12 * 60, b.startMinutes);
+              b.startTime = minutesToTime(jumatStart);
+              b.endTime = minutesToTime(jumatStart + 25);
+              b.durationMinutes = 25;
+            } else if (a.category === 'prayer' && a.title.includes('Jum\'at') && b.category === 'routine' && b.title.includes('Makan Siang')) {
+              // Case 4: Friday Lunch starts after Jum'at and ends strictly at 12:45 (before Mentoring Sesi 2)
+              if (a.endMinutes > b.startMinutes) {
+                b.startTime = a.endTime;
+                b.endTime = '12:45';
+                b.durationMinutes = Math.max(5, timeToMinutes('12:45') - a.endMinutes);
+              }
             }
           }
         }
