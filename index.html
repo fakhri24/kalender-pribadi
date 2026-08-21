@@ -91,11 +91,20 @@
         </button>
       </div>
 
-      <!-- View Switcher Tabs -->
-      <div class="view-mode-tabs">
-        <button class="tab-btn active" data-view="week">Mingguan (Grid)</button>
-        <button class="tab-btn" data-view="day">Harian (Fokus)</button>
-        <button class="tab-btn" data-view="agenda">Agenda (List)</button>
+      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        <!-- Zoom Density Switcher -->
+        <div class="view-mode-tabs" id="density-switch-group" title="Atur Tinggi Waktu / Kerapatan">
+          <button class="tab-btn" data-density="60">Padat</button>
+          <button class="tab-btn active" data-density="80">Normal</button>
+          <button class="tab-btn" data-density="105">Luas</button>
+        </div>
+
+        <!-- View Switcher Tabs -->
+        <div class="view-mode-tabs">
+          <button class="tab-btn active" data-view="week">Mingguan (Grid)</button>
+          <button class="tab-btn" data-view="day">Harian (Fokus)</button>
+          <button class="tab-btn" data-view="agenda">Agenda (List)</button>
+        </div>
       </div>
     </section>
 

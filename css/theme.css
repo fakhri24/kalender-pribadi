@@ -54,7 +54,7 @@
   --radius-xl: 24px;
   --radius-full: 9999px;
 
-  --hour-height: 54px; /* Height per 60 minutes in weekly grid */
+  --hour-height: 80px; /* Height per 60 minutes in weekly grid for clear readability */
   --grid-start-hour: 3; /* 03:00 */
   --grid-end-hour: 23;  /* 23:00 */
 }

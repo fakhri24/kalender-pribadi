@@ -13,8 +13,8 @@
 /* Weekly Grid Table Layout */
 .weekly-timegrid {
   display: grid;
-  grid-template-columns: 56px repeat(7, minmax(140px, 1fr));
-  min-width: 950px;
+  grid-template-columns: 56px repeat(7, minmax(165px, 1fr));
+  min-width: 1200px;
   position: relative;
 }
 
@@ -114,12 +114,12 @@
 /* Event Card (Positioned Absolutely) */
 .event-card {
   position: absolute;
-  left: 2px;
-  right: 2px;
+  left: 3px;
+  right: 3px;
   border-radius: var(--radius-sm);
   padding: 4px 6px;
   color: #FFFFFF;
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   overflow: hidden;
   cursor: pointer;
   z-index: 10;
@@ -128,13 +128,17 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  border-left: 3px solid rgba(255, 255, 255, 0.7);
+  border-left: 3px solid rgba(255, 255, 255, 0.85);
+  box-sizing: border-box;
 }
 
 .event-card:hover {
   transform: translateY(-1px) scale(1.02);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
-  z-index: 30;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+  z-index: 50;
+  min-height: fit-content;
+  max-height: 220px;
+  overflow: visible;
 }
 
 .event-card-header {
@@ -143,23 +147,60 @@
   justify-content: space-between;
   gap: 4px;
   margin-bottom: 2px;
+  line-height: 1;
 }
 
 .event-time-range {
-  font-size: 0.68rem;
-  font-weight: 700;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: -0.2px;
   opacity: 0.95;
   white-space: nowrap;
 }
 
 .event-title {
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.25;
   word-break: break-word;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Compact Event Card Layout (<= 25 minutes) */
+.event-card.is-compact {
+  padding: 2px 5px;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  border-left-width: 2.5px;
+}
+
+.event-card.is-compact .event-card-compact-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.event-card.is-compact .event-time-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 1px 4px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.event-card.is-compact .event-title-compact {
+  font-weight: 700;
+  font-size: 0.74rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Status Chips on Card */

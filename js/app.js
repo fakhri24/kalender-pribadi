@@ -52,6 +52,7 @@ class App {
       ratioBar: document.getElementById('ratio-bar'),
       ratioLegend: document.getElementById('ratio-legend'),
       viewTabBtns: document.querySelectorAll('.tab-btn[data-view]'),
+      densityBtns: document.querySelectorAll('.tab-btn[data-density]'),
       filterChips: document.querySelectorAll('.filter-chip[data-cat]'),
       calendarContainer: document.getElementById('calendar-view-container'),
       loggerModalEl: document.getElementById('logger-modal'),
@@ -318,6 +319,21 @@ class App {
         const viewMode = btn.getAttribute('data-view');
         this.currentViewMode = viewMode;
         this.calendarView.setViewMode(viewMode);
+      });
+    });
+
+    // Zoom Density Switcher
+    const currentDensity = localStorage.getItem('kp_hour_height') || '80';
+    this.dom.densityBtns.forEach(btn => {
+      if (btn.getAttribute('data-density') === currentDensity) {
+        this.dom.densityBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+      btn.addEventListener('click', () => {
+        this.dom.densityBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const density = Number(btn.getAttribute('data-density')) || 80;
+        this.calendarView.setHourHeight(density);
       });
     });
 

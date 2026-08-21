@@ -19,7 +19,14 @@ export class CalendarView {
 
     this.startHour = 3;  // 03:00
     this.endHour = 23;   // 23:00
-    this.hourHeight = 54; // px per 60 minutes
+    this.hourHeight = Number(localStorage.getItem('kp_hour_height')) || 80; // px per 60 minutes
+  }
+
+  setHourHeight(px) {
+    this.hourHeight = px;
+    localStorage.setItem('kp_hour_height', px);
+    document.documentElement.style.setProperty('--hour-height', `${px}px`);
+    this.render();
   }
 
   setEvents(events) {
@@ -136,7 +143,11 @@ export class CalendarView {
       // Render Event Cards
       dayEvents.forEach(evt => {
         const topPx = this.calculateTopPx(evt.startMinutes);
-        const heightPx = Math.max(22, (evt.durationMinutes / 60) * this.hourHeight - 2);
+        const isCompact = evt.durationMinutes <= 25;
+        const heightPx = isCompact 
+          ? Math.max(26, (evt.durationMinutes / 60) * this.hourHeight - 1)
+          : Math.max(36, (evt.durationMinutes / 60) * this.hourHeight - 2);
+
         const catObj = CATEGORIES[evt.category.toUpperCase()] || CATEGORIES.HABIT;
         const bgCol = evt.color || catObj.color;
         const isDuty = evt.isDynamicPrayer && evt.title.includes('Tugas');
@@ -157,17 +168,32 @@ export class CalendarView {
           `;
         }
 
+        let cardInnerHtml = '';
+        if (isCompact) {
+          cardInnerHtml = `
+            <div class="event-card-compact-row">
+              <span class="event-time-badge">${evt.startTime}</span>
+              <span class="event-title-compact">${evt.title}</span>
+              ${statusBadgeHtml}
+            </div>
+          `;
+        } else {
+          cardInnerHtml = `
+            <div class="event-card-header">
+              <span class="event-time-range">${evt.startTime} - ${evt.endTime}</span>
+              ${statusBadgeHtml}
+            </div>
+            <div class="event-title">${evt.title}</div>
+          `;
+        }
+
         html += `
-          <div class="event-card ${isDuty ? 'is-prayer-duty' : ''}"
+          <div class="event-card ${isCompact ? 'is-compact' : ''} ${isDuty ? 'is-prayer-duty' : ''}"
                data-event-id="${evt.id}"
                data-date="${evt.date}"
                style="top: ${topPx}px; height: ${heightPx}px; background-color: ${bgCol};"
                title="${evt.title} (${evt.startTime} - ${evt.endTime})">
-            <div class="event-card-header">
-              <span class="event-time-range">${evt.startTime} - ${evt.endTime}</span>
-            </div>
-            <div class="event-title">${evt.title}</div>
-            ${statusBadgeHtml}
+            ${cardInnerHtml}
           </div>
         `;
       });
