@@ -7,7 +7,7 @@ import { storage, STORES } from './storage.js';
 import { scheduler } from './scheduler.js';
 import { calculatePrayerTimes } from './prayerEngine.js';
 import { CalendarEvent } from '../models/Event.js';
-import { formatDate, minutesToTime, timeToMinutes, getWeekId, getStartOfWeek, getEndOfWeek } from '../utils/dateUtils.js';
+import { formatDate, parseDate, minutesToTime, timeToMinutes, getWeekId, getStartOfWeek, getEndOfWeek } from '../utils/dateUtils.js';
 
 function getWIBNow() {
   const now = new Date();
@@ -385,7 +385,7 @@ Gaya Komunikasi:
       case 'add_custom_event': {
         const startMins = timeToMinutes(args.startTime);
         const endMins = startMins + args.durationMinutes;
-        const targetDate = new Date(args.date);
+        const targetDate = parseDate(args.date);
 
         const newEvt = new CalendarEvent({
           id: `custom_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,

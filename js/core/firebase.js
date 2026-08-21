@@ -276,6 +276,27 @@ class FirebaseService {
   }
 
   /**
+   * Delete multiple documents in a batch
+   */
+  async deleteBulkDocs(subCollection, ids) {
+    if (!this.isSyncActive() || !ids || ids.length === 0) return true;
+    try {
+      const batch = writeBatch(this.db);
+      ids.forEach(id => {
+        if (id) {
+          const docRef = doc(this.db, 'users', this.currentUser.uid, subCollection, id);
+          batch.delete(docRef);
+        }
+      });
+      await batch.commit();
+      return true;
+    } catch (err) {
+      console.error(`Firestore deleteBulkDocs error [${subCollection}]:`, err);
+      return false;
+    }
+  }
+
+  /**
    * Sync all local data into Cloud Firestore
    */
   async syncLocalToCloud(localData = {}) {

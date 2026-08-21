@@ -231,16 +231,53 @@ class StorageEngine {
   }
 
   /**
-   * Delete events in a specific date range (inclusive)
+   * Delete multiple items in batch (Local + Cloud Firestore if active)
+   */
+  async deleteBulk(storeName, keys) {
+    if (!keys || keys.length === 0) return true;
+
+    // 1. Local Persistence (IndexedDB)
+    try {
+      const db = await this.initDB();
+      if (db) {
+        await new Promise((resolve, reject) => {
+          const tx = db.transaction(storeName, 'readwrite');
+          const store = tx.objectStore(storeName);
+          keys.forEach(key => store.delete(key));
+          tx.oncomplete = () => resolve(true);
+          tx.onerror = () => reject(tx.error);
+        });
+      }
+    } catch (e) {
+      console.warn('IndexedDB deleteBulk error', e);
+    }
+
+    // LocalStorage cleanup
+    keys.forEach(key => {
+      localStorage.removeItem(`kp_${storeName}_${key}`);
+    });
+
+    // 2. Background Cloud Sync
+    if (firebaseService.isSyncActive()) {
+      firebaseService.deleteBulkDocs(storeName, keys).catch(err => {
+        console.warn('Cloud delete error in deleteBulk:', err);
+      });
+    }
+
+    return true;
+  }
+
+  /**
+   * Delete events in a specific date range (inclusive) in batch
    */
   async deleteEventsInRange(startDate, endDate) {
     const allEvents = await this.getAll(STORES.EVENTS);
     const toDelete = allEvents.filter(e => e.date >= startDate && e.date <= endDate);
-    
-    for (const evt of toDelete) {
-      await this.delete(STORES.EVENTS, evt.id);
-    }
-    return toDelete.length;
+    if (toDelete.length === 0) return 0;
+
+    const keys = toDelete.map(e => e.id);
+    await this.deleteBulk(STORES.EVENTS, keys);
+    return keys.length;
   }
 
   /**

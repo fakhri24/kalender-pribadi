@@ -1,5 +1,5 @@
 {
-  "version": "1.0.4",
-  "releasedAt": "2026-08-21T13:06:00+07:00",
-  "changeNotes": "Peningkatan sinkronisasi mobile, redirect login Google, dan auto cache buster"
+  "version": "1.0.5",
+  "releasedAt": "2026-08-21T13:28:00+07:00",
+  "changeNotes": "Peningkatan akurasi timezone AI tools, batch delete storage, stopPropagation tombol eksekusi, dan sinkronisasi versi backup"
 }

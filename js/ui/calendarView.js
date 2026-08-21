@@ -361,9 +361,13 @@ export class CalendarView {
    * Attach click event listeners for cards and log buttons
    */
   attachEventListeners() {
+    // 1. Event Cards & Timeline Items
     const eventCards = this.container.querySelectorAll('.event-card, .daily-timeline-item');
     eventCards.forEach(card => {
       card.addEventListener('click', (e) => {
+        // If click originated from log-btn, let the log-btn handler handle it
+        if (e.target.closest('.log-btn')) return;
+
         const eventId = card.getAttribute('data-event-id');
         const evt = this.events.find(item => item.id === eventId);
         if (evt && this.onEventClick) {
@@ -372,6 +376,20 @@ export class CalendarView {
       });
     });
 
+    // 2. Specific Log Execution Buttons (with stopPropagation)
+    const logButtons = this.container.querySelectorAll('.log-btn');
+    logButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const eventId = btn.getAttribute('data-event-id');
+        const evt = this.events.find(item => item.id === eventId);
+        if (evt && this.onEventClick) {
+          this.onEventClick(evt);
+        }
+      });
+    });
+
+    // 3. Date Header Navigation
     const headerCells = this.container.querySelectorAll('.timegrid-header-cell[data-date]');
     headerCells.forEach(cell => {
       cell.addEventListener('click', () => {

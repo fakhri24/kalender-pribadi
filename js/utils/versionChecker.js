@@ -3,7 +3,7 @@
  * Detects new server releases and forces clean cache updates across devices
  */
 
-export const CURRENT_APP_VERSION = '1.0.4';
+export const CURRENT_APP_VERSION = '1.0.5';
 
 /**
  * Force clear cache and hard reload the application
