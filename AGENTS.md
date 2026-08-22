@@ -109,4 +109,4 @@ kalender-pribadi/
 5. **Mobile & Desktop Responsive**: Kalender nyaman dilihat di smartphone (tampilan Harian / Agenda / Chat Drawer full) maupun di laptop/desktop (Time Grid 7 Kolom).
 6. **Zero-Stale-Cache Guarantee**: Setiap rilis baru wajib menaikkan versi pada `version.json` dan query string aset di `index.html`. Engine `versionChecker.js` menggunakan `version.json` sebagai *Single Source of Truth* tanpa duplikasi hardcode di JS.
 7. **Cloud-First & Multi-Device Sync**: Cloud Firestore adalah *Single Primary Storage Layer* privat dengan *Persistent Offline Cache*. Seluruh pembaruan state tersinkronisasi otomatis saat user login Google.
-8. **Credential Security & Gitignore**: Kredensial pribadi (`firebaseConfig` dan `GEMINI_API_KEY`) disimpan pada `js/config/credentials.js` yang wajib masuk `.gitignore`, dengan `credentials.example.js` sebagai template publik.
+8. **Native Credentials Module**: Kredensial pribadi (`firebaseConfig` dan `GEMINI_API_KEY`) disimpan pada `js/config/credentials.js` untuk kemudahan sinkronisasi instan multi-device, dengan `credentials.example.js` sebagai template referensi.

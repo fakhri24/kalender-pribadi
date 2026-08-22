@@ -15,6 +15,3 @@ Thumbs.db
 *.log
 .env
 .env.local
-
-# Native Embedded Credentials
-js/config/credentials.js

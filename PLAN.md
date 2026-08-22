@@ -222,7 +222,7 @@ Target alokasi mingguan untuk slot fleksibel/mandiri (Rasio 80:10:10):
 ### Phase 11: Native Embedded Credentials, Seamless Cloud-First Storage & Streamlined Architecture `[DONE]`
 - [x] **Native Embedded Credentials (`js/config/credentials.js`)**:
   - Menyimpan `firebaseConfig` dan `GEMINI_API_KEY` langsung di file konfigurasi lokal internal.
-  - Menambahkan `js/config/credentials.js` ke `.gitignore` agar aman dari repositori publik.
+  - Mengintegrasikan `js/config/credentials.js` untuk auto-connect konfigurasi multi-device.
   - Menyediakan `js/config/credentials.example.js` sebagai template referensi repositori.
 - [x] **Zero-Setup Multi-Device Auto-Connect**:
   - Saat aplikasi dibuka di perangkat manapun (laptop/HP/tablet), konfigurasi Firebase & AI langsung terhubung otomatis tanpa perlu *copy-paste* JSON config atau membuat link hash setup.
