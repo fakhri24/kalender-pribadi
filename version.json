@@ -1,5 +1,5 @@
 {
-  "version": "1.0.13",
-  "releasedAt": "2026-08-21T15:46:00+07:00",
-  "changeNotes": "Optimasi bulk sync Firestore dengan automatic batch chunking (450 docs/chunk) untuk performa unggah data berkecepatan tinggi"
+  "version": "1.1.0",
+  "releasedAt": "2026-08-22T09:50:00+07:00",
+  "changeNotes": "Native Embedded Credentials (credentials.js), Zero-Setup Multi-Device Auto-Connect, dan arsitektur Cloud-First Storage yang ringkas & terintegrasi"
 }

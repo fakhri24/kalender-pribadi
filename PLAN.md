@@ -219,15 +219,15 @@ Target alokasi mingguan untuk slot fleksibel/mandiri (Rasio 80:10:10):
   - *Buka Shaum (Makan Malam)*: Makan besar ba'da Sholat Maghrib (`prayerAnchor: { prayer: 'maghrib', offset: 30, duration: 20 }`).
   - *Champion Squad 5 (Kamis)*: Disesuaikan menjadi pukul 18:50 – 19:00 (ba'da Buka Shaum).
 
-### Phase 11: Native Embedded Credentials, Seamless Cloud-First Storage & Streamlined Architecture `[PLANNED - TOMORROW]`
-- [ ] **Native Embedded Credentials (`js/config/credentials.js`)**:
+### Phase 11: Native Embedded Credentials, Seamless Cloud-First Storage & Streamlined Architecture `[DONE]`
+- [x] **Native Embedded Credentials (`js/config/credentials.js`)**:
   - Menyimpan `firebaseConfig` dan `GEMINI_API_KEY` langsung di file konfigurasi lokal internal.
   - Menambahkan `js/config/credentials.js` ke `.gitignore` agar aman dari repositori publik.
   - Menyediakan `js/config/credentials.example.js` sebagai template referensi repositori.
-- [ ] **Zero-Setup Multi-Device Auto-Connect**:
+- [x] **Zero-Setup Multi-Device Auto-Connect**:
   - Saat aplikasi dibuka di perangkat manapun (laptop/HP/tablet), konfigurasi Firebase & AI langsung terhubung otomatis tanpa perlu *copy-paste* JSON config atau membuat link hash setup.
   - Begitu login dengan akun Google, seluruh data jadwal mingguan, catatan eksekusi, dan refleksi otomatis tersinkronisasi langsung dari Cloud Firestore secara *seamless*.
-- [ ] **Full Cloud-First Storage & UI Streamlining**:
+- [x] **Full Cloud-First Storage & UI Streamlining**:
   - Menjadikan Cloud Firestore sebagai *Single Primary Storage Layer* (didukung *Persistent Offline Cache* bawaan Firestore yang 100% tetap bekerja offline).
   - Menghapus fitur cadangan manual lama (Export/Import JSON) dari UI dan membersihkan menu pengaturan agar lebih ringkas, elegan, dan fokus.
   - Menghentikan/menghapus fitur generator link `#setup=...` karena seluruh perangkat otomatis sudah memiliki konfigurasi bawaan.

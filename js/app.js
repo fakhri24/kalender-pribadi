@@ -15,7 +15,6 @@ import { AIChatDrawer } from './ui/aiChatDrawer.js';
 import { firebaseService } from './core/firebase.js';
 import { CalendarEvent } from './models/Event.js';
 import { ExecutionLog } from './models/ExecutionLog.js';
-import { exportAllData, importDataFromFile } from './utils/exportImport.js';
 import {
   getWeekDays,
   getStartOfWeek,
@@ -34,7 +33,6 @@ class App {
     this.events = [];
     this.currentTheme = localStorage.getItem('kp_theme') || 'light';
 
-    this.checkUrlSetup();
     this.initDOM();
     this.initComponents();
     this.initTheme();
@@ -54,9 +52,6 @@ class App {
       reviewBtn: document.getElementById('weekly-review-btn'),
       settingsBtn: document.getElementById('settings-btn'),
       cloudSyncStatus: document.getElementById('cloud-sync-status'),
-      exportBtn: document.getElementById('export-btn'),
-      importBtn: document.getElementById('import-btn'),
-      importFileInput: document.getElementById('import-file-input'),
       prayerRibbon: document.getElementById('prayer-ribbon'),
       ratioBar: document.getElementById('ratio-bar'),
       ratioLegend: document.getElementById('ratio-legend'),
@@ -392,11 +387,6 @@ class App {
       });
     });
 
-    // Export Data JSON
-    this.dom.exportBtn?.addEventListener('click', async () => {
-      await exportAllData();
-    });
-
     // Settings Modal (Cloud & AI)
     this.dom.settingsBtn?.addEventListener('click', () => {
       this.settingsModal.open();
@@ -404,24 +394,6 @@ class App {
 
     this.dom.cloudSyncStatus?.addEventListener('click', () => {
       this.settingsModal.open();
-    });
-
-    // Import Data JSON
-    this.dom.importBtn?.addEventListener('click', () => {
-      this.dom.importFileInput?.click();
-    });
-
-    this.dom.importFileInput?.addEventListener('change', async (e) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        try {
-          const res = await importDataFromFile(file);
-          alert(res.message);
-          await this.refreshUI();
-        } catch (err) {
-          alert(`Gagal mengimpor data: ${err.message}`);
-        }
-      }
     });
   }
 
@@ -451,35 +423,6 @@ class App {
       this.dom.cloudSyncStatus.innerHTML = `💾 Mode Lokal`;
       this.dom.cloudSyncStatus.style.color = 'var(--accent-primary)';
       this.dom.cloudSyncStatus.title = `Klik untuk mengaktifkan Cloud Sync (Multi-Device)`;
-    }
-  }
-
-  checkUrlSetup() {
-    try {
-      const hash = window.location.hash;
-      if (hash && hash.includes('setup=')) {
-        const match = hash.match(/setup=([^&]+)/);
-        if (match && match[1]) {
-          const raw = atob(decodeURIComponent(match[1]));
-          const setup = JSON.parse(raw);
-          if (setup.fc) {
-            localStorage.setItem('kp_firebase_config', JSON.stringify(setup.fc));
-            firebaseService.init(setup.fc);
-          }
-          if (setup.gk) {
-            localStorage.setItem('kp_gemini_api_key', setup.gk);
-          }
-          if (setup.gm) {
-            localStorage.setItem('kp_gemini_model_name', setup.gm);
-          }
-          window.history.replaceState(null, '', window.location.pathname + window.location.search);
-          setTimeout(() => {
-            alert('🎉 Setup Berhasil!\n\nKonfigurasi Firebase & Gemini AI berhasil diimpor otomatis ke perangkat ini. Sekarang Anda dapat login Google untuk mengaktifkan Cloud Sync!');
-          }, 300);
-        }
-      }
-    } catch (e) {
-      console.warn('Gagal membaca URL setup:', e);
     }
   }
 

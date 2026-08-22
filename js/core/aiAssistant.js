@@ -8,6 +8,7 @@ import { scheduler } from './scheduler.js';
 import { calculatePrayerTimes } from './prayerEngine.js';
 import { CalendarEvent } from '../models/Event.js';
 import { formatDate, parseDate, minutesToTime, timeToMinutes, getWeekId, getStartOfWeek, getEndOfWeek } from '../utils/dateUtils.js';
+import { GEMINI_API_KEY as embeddedGeminiKey, DEFAULT_GEMINI_MODEL as embeddedModel } from '../config/credentials.js';
 
 function getWIBNow() {
   const now = new Date();
@@ -61,7 +62,19 @@ export class AIAssistant {
   }
 
   getApiKey() {
-    return localStorage.getItem('kp_gemini_api_key') || '';
+    const customKey = localStorage.getItem('kp_gemini_api_key');
+    if (customKey && customKey.trim() && !customKey.includes('YOUR_')) {
+      return customKey.trim();
+    }
+    if (embeddedGeminiKey && embeddedGeminiKey.trim() && !embeddedGeminiKey.includes('YOUR_')) {
+      return embeddedGeminiKey.trim();
+    }
+    return '';
+  }
+
+  isUsingEmbeddedKey() {
+    const customKey = localStorage.getItem('kp_gemini_api_key');
+    return !customKey && Boolean(embeddedGeminiKey && embeddedGeminiKey.trim() && !embeddedGeminiKey.includes('YOUR_'));
   }
 
   /**
@@ -546,7 +559,7 @@ Gaya Komunikasi:
       console.warn('Gagal memuat list models dari Gemini API:', e);
     }
 
-    return 'gemini-3.5-flash-lite';
+    return embeddedModel || 'gemini-3.5-flash-lite';
   }
 
   /**

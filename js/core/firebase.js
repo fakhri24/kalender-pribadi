@@ -33,6 +33,22 @@ import {
   writeBatch
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
+import { firebaseConfig as embeddedFirebaseConfig } from '../config/credentials.js';
+
+/**
+ * Check if a firebase config object is non-empty and not placeholder
+ */
+function isConfigValid(config) {
+  return Boolean(
+    config &&
+    typeof config === 'object' &&
+    config.apiKey &&
+    config.projectId &&
+    !config.apiKey.includes('YOUR_') &&
+    !config.projectId.includes('YOUR_')
+  );
+}
+
 class FirebaseService {
   constructor() {
     this.app = null;
@@ -42,11 +58,11 @@ class FirebaseService {
     this.isInitialized = false;
     this.authCallbacks = [];
 
-    this.loadSavedConfig();
+    this.autoInitialize();
   }
 
   /**
-   * Load Firebase config from localStorage
+   * Load custom Firebase config from localStorage if user manually set it
    */
   getSavedConfig() {
     try {
@@ -67,12 +83,35 @@ class FirebaseService {
   }
 
   /**
-   * Initialize Firebase with provided config or saved config
+   * Get active config prioritizing saved custom config, then embedded native config
+   */
+  getActiveConfig() {
+    const saved = this.getSavedConfig();
+    if (isConfigValid(saved)) return saved;
+    if (isConfigValid(embeddedFirebaseConfig)) return embeddedFirebaseConfig;
+    return null;
+  }
+
+  isEmbeddedConfigAvailable() {
+    return isConfigValid(embeddedFirebaseConfig);
+  }
+
+  isCustomConfigActive() {
+    return isConfigValid(this.getSavedConfig());
+  }
+
+  getProjectId() {
+    const config = this.getActiveConfig();
+    return config ? config.projectId : '';
+  }
+
+  /**
+   * Initialize Firebase with provided config or active embedded/saved config
    */
   async init(customConfig = null) {
-    const config = customConfig || this.getSavedConfig();
-    if (!config || !config.apiKey || !config.projectId) {
-      console.log('Firebase config belum dikonfigurasi. Berjalan dalam mode lokal.');
+    const config = customConfig || this.getActiveConfig();
+    if (!isConfigValid(config)) {
+      console.log('Firebase config belum dikonfigurasi / masih template. Berjalan dalam mode lokal.');
       this.isInitialized = false;
       return false;
     }
@@ -325,8 +364,8 @@ class FirebaseService {
     };
   }
 
-  loadSavedConfig() {
-    const config = this.getSavedConfig();
+  autoInitialize() {
+    const config = this.getActiveConfig();
     if (config) {
       this.init(config);
     }
